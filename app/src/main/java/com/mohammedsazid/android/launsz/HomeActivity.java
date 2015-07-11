@@ -27,14 +27,38 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class HomeActivity extends Activity {
+
+    private GridView alphabetGridView;
+    private List<String> alphabetsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        alphabetGridView = (GridView) findViewById(R.id.alphabets_gridView);
+
+        alphabetsList = new ArrayList<String>();
+        String[] alphabets = new String[] {
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
+        };
+        alphabetsList.addAll(Arrays.asList(alphabets));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1, alphabetsList);
+
+        alphabetGridView.setAdapter(adapter);
     }
 
     public void showApps(View v) {

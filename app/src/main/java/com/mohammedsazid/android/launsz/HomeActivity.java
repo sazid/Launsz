@@ -27,8 +27,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,15 +50,29 @@ public class HomeActivity extends Activity {
         alphabetGridView = (GridView) findViewById(R.id.alphabets_gridView);
 
         alphabetsList = new ArrayList<String>();
-        String[] alphabets = new String[] {
-                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
+        String[] alphabets = new String[]{
+                "*", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
         };
         alphabetsList.addAll(Arrays.asList(alphabets));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this,
-                android.R.layout.simple_list_item_1, alphabetsList);
+                R.layout.alphabets_list_item, alphabetsList) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.alphabets_list_item, null);
+                }
+
+                // Name of the app
+                TextView alphabetLabelView = (TextView)
+                        convertView.findViewById(R.id.item_alphabet_textView);
+                alphabetLabelView.setText(alphabetsList.get(position));
+
+                return convertView;
+            }
+        };
 
         alphabetGridView.setAdapter(adapter);
     }

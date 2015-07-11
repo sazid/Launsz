@@ -133,8 +133,21 @@ public class AppsListActivity extends Activity {
                 String packageName = apps.get(position).name.toString();
                 Intent i = packageManager.getLaunchIntentForPackage(packageName);
                 startActivity(i);
+
+                overridePendingTransition(
+                        android.R.anim.slide_in_left, android.R.anim.slide_out_right
+                );
             }
         });
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(
+                android.R.anim.slide_in_left, android.R.anim.slide_out_right
+        );
     }
 
 }

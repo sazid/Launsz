@@ -104,8 +104,16 @@ public class HomeActivity extends Activity {
                 i.putExtra(HomeActivity.EXTRA_INITIAL_ALPHABET, alphabet);
 
                 startActivity(i);
+                overridePendingTransition(
+                        android.R.anim.slide_in_left, android.R.anim.slide_out_right
+                );
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        return;
+//        super.onBackPressed();
+    }
 }

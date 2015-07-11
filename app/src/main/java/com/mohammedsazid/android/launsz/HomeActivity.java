@@ -51,8 +51,8 @@ public class HomeActivity extends Activity {
 
         alphabetsList = new ArrayList<String>();
         String[] alphabets = new String[]{
-                "*", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
         };
         alphabetsList.addAll(Arrays.asList(alphabets));
 

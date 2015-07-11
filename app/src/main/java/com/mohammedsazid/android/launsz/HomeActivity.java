@@ -61,9 +61,15 @@ public class HomeActivity extends Activity {
                 R.layout.alphabets_list_item, alphabetsList) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
+                int heightPerRow = parent.getHeight();
+                int totalRowNum = 7;
+
                 if (convertView == null) {
                     convertView = getLayoutInflater().inflate(R.layout.alphabets_list_item, null);
                 }
+
+                // Set the height of each child view of the GridView
+                convertView.setMinimumHeight(heightPerRow / totalRowNum);
 
                 // Name of the app
                 TextView alphabetLabelView = (TextView)

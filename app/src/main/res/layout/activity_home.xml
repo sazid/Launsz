@@ -46,9 +46,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:columnWidth="84dp"
-        android:verticalSpacing="24dp"
-        android:numColumns="4"
-        android:stretchMode="spacingWidthUniform"/>
+        android:numColumns="4" />
 
 </RelativeLayout>

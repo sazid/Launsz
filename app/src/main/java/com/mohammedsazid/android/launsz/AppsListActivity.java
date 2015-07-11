@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,14 +24,20 @@ public class AppsListActivity extends Activity {
     private List<AppDetail> apps;
     private ListView listView;
 
+    private String filterAlphabet = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apps_list);
 
+        filterAlphabet = getIntent().getStringExtra(HomeActivity.EXTRA_INITIAL_ALPHABET);
+
         loadApps();
         loadListView();
         addClickListener();
+
+        Log.v(AppsListActivity.class.getSimpleName(), filterAlphabet);
     }
 
 //    @Override
@@ -69,10 +73,18 @@ public class AppsListActivity extends Activity {
 
         for (ResolveInfo ri : availableActivities) {
             AppDetail app = new AppDetail();
+
             app.label = ri.loadLabel(packageManager);
             app.name = ri.activityInfo.packageName;
             app.icon = ri.activityInfo.loadIcon(packageManager);
-            apps.add(app);
+
+//            Log.v("AppName", String.valueOf(app.label.toString().startsWith(filterAlphabet)));
+
+            if (filterAlphabet == null || filterAlphabet.equals("*")) {
+                apps.add(app);
+            } else if (app.label.toString().startsWith(filterAlphabet)) {
+                apps.add(app);
+            }
         }
 
         java.util.Collections.sort(apps);

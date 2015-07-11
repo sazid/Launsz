@@ -41,6 +41,8 @@ import java.util.List;
 
 public class HomeActivity extends Activity {
 
+    public static final String EXTRA_INITIAL_ALPHABET = "initial_alphabet";
+
     private Context mContext;
     private GridView alphabetGridView;
     private List<String> alphabetsList;
@@ -98,10 +100,10 @@ public class HomeActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String alphabet = alphabetsList.get(position);
 
-                if (alphabet.equals("*")) {
-                    Intent i = new Intent(mContext, AppsListActivity.class);
-                    startActivity(i);
-                }
+                Intent i = new Intent(mContext, AppsListActivity.class);
+                i.putExtra(HomeActivity.EXTRA_INITIAL_ALPHABET, alphabet);
+
+                startActivity(i);
             }
         });
     }

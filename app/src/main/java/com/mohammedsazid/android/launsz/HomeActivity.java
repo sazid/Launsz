@@ -24,10 +24,12 @@
 package com.mohammedsazid.android.launsz;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -39,21 +41,28 @@ import java.util.List;
 
 public class HomeActivity extends Activity {
 
+    private Context mContext;
     private GridView alphabetGridView;
     private List<String> alphabetsList;
+    private String[] alphabets = new String[]{
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
+            "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        mContext = this;
 
+        loadAlphabetsGridView();
+        addClickListener();
+    }
+
+    private void loadAlphabetsGridView() {
         alphabetGridView = (GridView) findViewById(R.id.alphabets_gridView);
 
         alphabetsList = new ArrayList<String>();
-        String[] alphabets = new String[]{
-                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-                "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
-        };
         alphabetsList.addAll(Arrays.asList(alphabets));
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -83,9 +92,18 @@ public class HomeActivity extends Activity {
         alphabetGridView.setAdapter(adapter);
     }
 
-    public void showApps(View v) {
-        Intent i = new Intent(this, AppsListActivity.class);
-        startActivity(i);
+    private void addClickListener() {
+        alphabetGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String alphabet = alphabetsList.get(position);
+
+                if (alphabet.equals("*")) {
+                    Intent i = new Intent(mContext, AppsListActivity.class);
+                    startActivity(i);
+                }
+            }
+        });
     }
 
 }

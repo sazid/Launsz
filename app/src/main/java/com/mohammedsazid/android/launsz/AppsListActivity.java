@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -37,7 +36,7 @@ public class AppsListActivity extends Activity {
         loadListView();
         addClickListener();
 
-        Log.v(AppsListActivity.class.getSimpleName(), filterAlphabet);
+//        Log.v(AppsListActivity.class.getSimpleName(), filterAlphabet);
     }
 
 //    @Override

@@ -190,6 +190,21 @@ public class HomeActivity extends Activity {
                 startActivity(i);
             }
         });
+
+        alphabetGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if ("*".equals(alphabetsList.get(position))) {
+                    Intent i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                    startActivity(Intent.createChooser(i, "Select Wallpaper"));
+
+                    return true;
+                }
+
+
+                return false;
+            }
+        });
     }
 
     @Override

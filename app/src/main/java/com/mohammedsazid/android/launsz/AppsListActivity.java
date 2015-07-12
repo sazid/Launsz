@@ -2,10 +2,12 @@ package com.mohammedsazid.android.launsz;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +23,7 @@ import java.util.List;
 
 public class AppsListActivity extends Activity {
 
+    private SharedPreferences sharedPrefs;
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private ListView listView;
@@ -35,6 +38,7 @@ public class AppsListActivity extends Activity {
         setContentView(R.layout.activity_apps_list);
 
         filterAlphabet = getIntent().getStringExtra(HomeActivity.EXTRA_INITIAL_ALPHABET);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         loadApps();
         loadListView();
@@ -90,6 +94,11 @@ public class AppsListActivity extends Activity {
                     convertView = getLayoutInflater().inflate(R.layout.apps_list_item, null);
                 }
 
+                int color_enabled = sharedPrefs.getInt(
+                        getString(R.string.color_enabled_key),
+                        R.color.color_enabled_default
+                );
+
                 // Icon of the app
                 ImageView appIcon = (ImageView) convertView.findViewById(R.id.item_app_icon);
                 appIcon.setImageDrawable(apps.get(position).icon);
@@ -99,6 +108,7 @@ public class AppsListActivity extends Activity {
                 // Name of the app
                 TextView appLabel = (TextView) convertView.findViewById(R.id.item_app_label);
                 appLabel.setText(apps.get(position).label);
+                appLabel.setTextColor(color_enabled);
 
                 // Package name of the app
 //                TextView appName = (TextView) convertView.findViewById(R.id.item_app_name);

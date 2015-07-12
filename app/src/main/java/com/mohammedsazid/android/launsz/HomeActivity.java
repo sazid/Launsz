@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -153,11 +154,19 @@ public class HomeActivity extends Activity {
                         getString(R.string.color_enabled_key), R.color.color_enabled_default);
                 int color_disabled = sharedPrefs.getInt(
                         getString(R.string.color_disabled_key), R.color.color_disabled_default);
+                boolean bold_alphabets = sharedPrefs.getBoolean(
+                        getString(R.string.alphabet_bold_key),
+                        false
+                );
 
                 alphabetLabelView.setTextColor(color_enabled);
                 if (!matched) {
                     alphabetLabelView.setEnabled(false);
                     alphabetLabelView.setTextColor(color_disabled);
+                }
+
+                if (bold_alphabets) {
+                    alphabetLabelView.setTypeface(null, Typeface.BOLD);
                 }
 
                 return convertView;

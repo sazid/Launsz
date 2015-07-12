@@ -15,4 +15,5 @@
 
     <string name="color_enabled_key">color_enabled_key</string>
     <string name="color_disabled_key">color_disabled_key</string>
+    <string name="alphabet_bold_key">alphabet_bold_key</string>
 </resources>

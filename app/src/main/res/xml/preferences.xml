@@ -32,21 +32,32 @@
     <!--android:summary="Dark"-->
     <!--android:title="Theme" />-->
 
+    <PreferenceCategory android:title="General">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/alphabet_bold_key"
+            android:summaryOff="Alphabets are now normal"
+            android:summaryOn="Alphabets are now bolded"
+            android:title="Bold alphabets" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Colors">
 
         <net.margaritov.preference.colorpicker.ColorPickerPreference
-            android:key="@string/color_enabled_key"
+            alphaSlider="true"
             android:defaultValue="@color/color_enabled_default"
-            android:title="Primary color"
+            android:key="@string/color_enabled_key"
             android:summary="Enabled item color"
-            alphaSlider="true" />
+            android:title="Primary color" />
 
         <net.margaritov.preference.colorpicker.ColorPickerPreference
-            android:key="@string/color_disabled_key"
+            alphaSlider="true"
             android:defaultValue="@color/color_disabled_default"
-            android:title="Secondary color"
+            android:key="@string/color_disabled_key"
             android:summary="Disabled item color"
-            alphaSlider="true" />
+            android:title="Secondary color" />
 
     </PreferenceCategory>
 

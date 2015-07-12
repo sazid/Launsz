@@ -37,6 +37,8 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -195,8 +197,30 @@ public class HomeActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if ("*".equals(alphabetsList.get(position))) {
-                    Intent i = new Intent(Intent.ACTION_SET_WALLPAPER);
-                    startActivity(Intent.createChooser(i, "Select Wallpaper"));
+
+                    new MaterialDialog.Builder(mContext)
+                            .title("Menu")
+                            .items(R.array.menu_items)
+                            .itemsCallback(new MaterialDialog.ListCallback() {
+                                @Override
+                                public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+//                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
+
+                                    switch (position) {
+                                        case 0:
+                                            break;
+                                        case 1:
+                                            Intent i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                            startActivity(Intent.createChooser(i, "Select Wallpaper"));
+                                            break;
+                                        case 2:
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            })
+                            .show();
 
                     return true;
                 }

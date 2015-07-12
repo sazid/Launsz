@@ -16,4 +16,10 @@
         <item>dark</item>
         <item>light</item>
     </string-array>
+
+    <string-array name="menu_items">
+        <item>Settings</item>
+        <item>Wallpaper</item>
+        <item>About</item>
+    </string-array>
 </resources>

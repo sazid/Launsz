@@ -79,9 +79,15 @@ public class AppsListActivity extends Activity {
     }
 
     private void loadListView() {
+        final int color_enabled = sharedPrefs.getInt(
+                getString(R.string.color_enabled_key),
+                R.color.color_enabled_default
+        );
+
         listView = (ListView) findViewById(R.id.apps_listview);
         alphabetTextView = (TextView) findViewById(R.id.alphabet_textview);
         alphabetTextView.setText(filterAlphabet);
+        alphabetTextView.setTextColor(color_enabled);
 
         ArrayAdapter<AppDetail> adapter = new ArrayAdapter<AppDetail>(
                 this,
@@ -93,11 +99,6 @@ public class AppsListActivity extends Activity {
                 if (convertView == null) {
                     convertView = getLayoutInflater().inflate(R.layout.apps_list_item, null);
                 }
-
-                int color_enabled = sharedPrefs.getInt(
-                        getString(R.string.color_enabled_key),
-                        R.color.color_enabled_default
-                );
 
                 // Icon of the app
                 ImageView appIcon = (ImageView) convertView.findViewById(R.id.item_app_icon);

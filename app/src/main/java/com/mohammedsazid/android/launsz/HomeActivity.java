@@ -236,6 +236,10 @@ public class HomeActivity extends Activity {
                                             startActivity(Intent.createChooser(i, "Select Wallpaper"));
                                             break;
                                         case 2:
+                                            new MaterialDialog.Builder(mContext)
+                                                    .title("About")
+                                                    .content(R.string.about_summary)
+                                                    .show();
                                             break;
                                         default:
                                             break;

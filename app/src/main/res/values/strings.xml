@@ -16,4 +16,11 @@
     <string name="color_enabled_key">color_enabled_key</string>
     <string name="color_disabled_key">color_disabled_key</string>
     <string name="alphabet_bold_key">alphabet_bold_key</string>
+
+    <string name="about_summary">
+        Launsz\nDead simple launcher focused on productivity, speed &amp; simplicity.\n\n\nAuthor:\nMohammed Sazid Al Rashid\nTwitter: @sazidz\nG+: sazidozon\nXDA: sazid4199
+    </string>
+    <string name="email_summ">Contact the developer</string>
+    <string name="email_uri">mailto:sazidozon@gmail.com</string>
+    <string name="email_sub">Launsz: [your subject here]</string>
 </resources>

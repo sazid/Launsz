@@ -84,6 +84,8 @@ public class HomeActivity extends Activity {
             windowManager.dimAmount = (dim_percentage / 100);
 
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         }
     }
 

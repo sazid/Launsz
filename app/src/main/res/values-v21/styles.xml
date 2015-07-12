@@ -1,0 +1,54 @@
+
+<!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2015 Mohammed Sazid-Al-Rashid
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
+<resources>
+
+    <!-- just defines top layer "Animation" -->
+    <style name="Animation" />
+
+    <!-- the animations must have been defined in your "anim" folder, of course -->
+    <style name="Animation.ActivityAnimation">
+        <!--<item name="android:activityOpenEnterAnimation">@android:anim/slide_in_left</item>-->
+        <!--<item name="android:activityOpenExitAnimation">@android:anim/slide_out_right</item>-->
+        <!--<item name="android:activityCloseEnterAnimation">@android:anim/slide_in_left</item>-->
+        <!--<item name="android:activityCloseExitAnimation">@android:anim/slide_out_right</item>-->
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <!--<style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">-->
+    <style name="AppThemeDark" parent="@android:style/Theme.DeviceDefault.Wallpaper.NoTitleBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
+    </style>
+
+</resources>

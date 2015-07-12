@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +25,7 @@ public class AppsListActivity extends Activity {
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private ListView listView;
+    private OnSwipeTouchListener swipeTouchListener;
 
     private String filterAlphabet = null;
 
@@ -37,6 +39,13 @@ public class AppsListActivity extends Activity {
         loadApps();
         loadListView();
         addClickListener();
+        addSwipeListener();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        swipeTouchListener.getGestureDetector().onTouchEvent(ev);
+        return super.dispatchTouchEvent(ev);
     }
 
 //    @Override
@@ -86,7 +95,6 @@ public class AppsListActivity extends Activity {
 
         java.util.Collections.sort(apps);
     }
-
 
     private void loadListView() {
         listView = (ListView) findViewById(R.id.apps_listview);
@@ -150,6 +158,16 @@ public class AppsListActivity extends Activity {
                 return true;
             }
         });
+    }
+
+    private void addSwipeListener() {
+        swipeTouchListener = new OnSwipeTouchListener(this) {
+            public void onSwipeRight() {
+                onBackPressed();
+            }
+        };
+
+        listView.setOnTouchListener(swipeTouchListener);
     }
 
     @Override

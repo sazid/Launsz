@@ -55,6 +55,11 @@ public class SettingsActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        restartApp();
+    }
+
+    @Override
     public void onBackPressed() {
         restartApp();
     }

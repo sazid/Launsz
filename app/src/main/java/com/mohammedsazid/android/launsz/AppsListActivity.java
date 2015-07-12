@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -33,6 +34,12 @@ public class AppsListActivity extends Activity {
     private String filterAlphabet = null;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        dimBackground(sharedPrefs);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apps_list);
@@ -40,10 +47,31 @@ public class AppsListActivity extends Activity {
         filterAlphabet = getIntent().getStringExtra(HomeActivity.EXTRA_INITIAL_ALPHABET);
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        dimBackground(sharedPrefs);
+
         loadApps();
         loadListView();
         addClickListener();
 //        addSwipeListener();
+    }
+
+    private void dimBackground(SharedPreferences sharedPrefs) {
+        float dim_percentage = sharedPrefs.getInt(
+                getString(R.string.bg_dim_amount_key),
+                0
+        );
+
+        boolean dim_enabled = sharedPrefs.getBoolean(
+                getString(R.string.bg_dim_key),
+                false
+        );
+
+        if (dim_enabled) {
+            WindowManager.LayoutParams windowManager = getWindow().getAttributes();
+            windowManager.dimAmount = (dim_percentage / 100);
+
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
     }
 
 //    @Override

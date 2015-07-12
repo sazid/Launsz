@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -65,12 +66,39 @@ public class HomeActivity extends Activity {
             "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
     };
 
+    private void dimBackground(SharedPreferences sharedPrefs) {
+        float dim_percentage = sharedPrefs.getInt(
+                getString(R.string.bg_dim_amount_key),
+                0
+        );
+
+        boolean dim_enabled = sharedPrefs.getBoolean(
+                getString(R.string.bg_dim_key),
+                false
+        );
+
+        if (dim_enabled) {
+            WindowManager.LayoutParams windowManager = getWindow().getAttributes();
+            windowManager.dimAmount = (dim_percentage / 100);
+
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dimBackground(sharedPrefs);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mContext = this;
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        dimBackground(sharedPrefs);
 
         loadApps();
         loadAlphabetsGridView();

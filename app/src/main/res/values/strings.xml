@@ -16,6 +16,8 @@
     <string name="color_enabled_key">color_enabled_key</string>
     <string name="color_disabled_key">color_disabled_key</string>
     <string name="alphabet_bold_key">alphabet_bold_key</string>
+    <string name="bg_dim_key">bg_dim_key</string>
+    <string name="bg_dim_amount_key">bg_dim_amount_key</string>
 
     <string name="about_summary">
         Launsz\nDead simple launcher focused on productivity, speed &amp; simplicity.\n\n\nAuthor:\nMohammed Sazid Al Rashid\nTwitter: @sazidz\nG+: sazidozon\nXDA: sazid4199

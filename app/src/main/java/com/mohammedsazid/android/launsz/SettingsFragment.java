@@ -28,12 +28,41 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.view.WindowManager;
 
 /**
  * Created by sazid on 7/12/2015.
  */
 public class SettingsFragment extends PreferenceFragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        implements Preference.OnPreferenceChangeListener {
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        String key = preference.getKey();
+        SharedPreferences sharedPrefs = preference.getSharedPreferences();
+
+        float dim_percentage = sharedPrefs.getInt(
+                getString(R.string.bg_dim_amount_key),
+                0
+        );
+
+        boolean dim_enabled = sharedPrefs.getBoolean(
+                getString(R.string.bg_dim_key),
+                false
+        );
+
+        if (key.equals(getString(R.string.bg_dim_key)) || key.equals(getString(R.string.bg_dim_amount_key))) {
+            if (dim_enabled) {
+                WindowManager.LayoutParams windowManager = getActivity().getWindow().getAttributes();
+                windowManager.dimAmount = (dim_percentage / 100);
+
+                getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            } else {
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            }
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
@@ -46,16 +75,15 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(getString(R.string.color_enabled_key)) || key.equals(getString(R.string.color_disabled_key))) {
-//            getActivity().recreate();
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
+
+        Preference dimSeekbarPref = findPreference(getString(R.string.bg_dim_amount_key));
+        Preference dimEnabledPref = findPreference(getString(R.string.bg_dim_key));
+
+        dimSeekbarPref.setOnPreferenceChangeListener(this);
+        dimEnabledPref.setOnPreferenceChangeListener(this);
     }
 }

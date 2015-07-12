@@ -28,25 +28,17 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Process;
+import android.preference.PreferenceManager;
+import android.view.WindowManager;
 
 
 public class SettingsActivity extends Activity {
 
     public static Context mContext;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_settings);
-
-        getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
-
-        SettingsActivity.mContext = this;
-    }
+    private SharedPreferences sharedPrefs;
 
     public static void restartApp() {
         AlarmManager alm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
@@ -56,6 +48,45 @@ public class SettingsActivity extends Activity {
                 PendingIntent.getActivity(mContext, 0, new Intent(mContext, HomeActivity.class), 0)
         );
         Process.killProcess(Process.myPid());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dimBackground(sharedPrefs);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_settings);
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SettingsActivity.mContext = this;
+
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SettingsFragment())
+                .commit();
+
+        dimBackground(sharedPrefs);
+    }
+
+    private void dimBackground(SharedPreferences sharedPrefs) {
+        float dim_percentage = sharedPrefs.getInt(
+                getString(R.string.bg_dim_amount_key),
+                0
+        );
+
+        boolean dim_enabled = sharedPrefs.getBoolean(
+                getString(R.string.bg_dim_key),
+                false
+        );
+
+        if (dim_enabled) {
+            WindowManager.LayoutParams windowManager = getWindow().getAttributes();
+            windowManager.dimAmount = (dim_percentage / 100);
+
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        }
     }
 
     @Override

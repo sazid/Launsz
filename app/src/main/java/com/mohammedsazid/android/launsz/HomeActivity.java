@@ -29,9 +29,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -179,13 +181,15 @@ public class HomeActivity extends Activity {
                 alphabetLabelView.setText(alphabetsList.get(position));
 
                 int color_enabled = sharedPrefs.getInt(
-                        getString(R.string.color_enabled_key), R.color.color_enabled_default);
+                        getString(R.string.color_enabled_key), Color.WHITE);
                 int color_disabled = sharedPrefs.getInt(
-                        getString(R.string.color_disabled_key), R.color.color_disabled_default);
+                        getString(R.string.color_disabled_key), Color.DKGRAY);
                 boolean bold_alphabets = sharedPrefs.getBoolean(
                         getString(R.string.alphabet_bold_key),
                         false
                 );
+
+                Log.v("Colors", "Enabled: " + String.valueOf(color_enabled) + ", Disabled: " + String.valueOf(color_disabled));
 
                 alphabetLabelView.setTextColor(color_enabled);
                 if (!matched) {

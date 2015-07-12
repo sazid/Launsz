@@ -24,7 +24,7 @@
 
 <resources>
 
-    <item type="color" name="color_enabled_default">0xffffffff</item>
-    <item type="color" name="color_disabled_default">0xff444444</item>
+    <item type="color" name="color_enabled_default">#ffffff</item>
+    <item type="color" name="color_disabled_default">#444444</item>
 
 </resources>

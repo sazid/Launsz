@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -109,7 +110,7 @@ public class AppsListActivity extends Activity {
     private void loadListView() {
         final int color_enabled = sharedPrefs.getInt(
                 getString(R.string.color_enabled_key),
-                R.color.color_enabled_default
+                Color.WHITE
         );
 
         listView = (ListView) findViewById(R.id.apps_listview);

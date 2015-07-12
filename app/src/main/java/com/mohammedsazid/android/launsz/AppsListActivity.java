@@ -25,7 +25,7 @@ public class AppsListActivity extends Activity {
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private ListView listView;
-    private OnSwipeTouchListener swipeTouchListener;
+//    private OnSwipeTouchListener swipeTouchListener;
 
     private String filterAlphabet = null;
 
@@ -39,35 +39,13 @@ public class AppsListActivity extends Activity {
         loadApps();
         loadListView();
         addClickListener();
-        addSwipeListener();
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        swipeTouchListener.getGestureDetector().onTouchEvent(ev);
-        return super.dispatchTouchEvent(ev);
+//        addSwipeListener();
     }
 
 //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_apps_list, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        swipeTouchListener.getGestureDetector().onTouchEvent(ev);
+//        return super.dispatchTouchEvent(ev);
 //    }
 
     private void loadApps() {
@@ -160,15 +138,15 @@ public class AppsListActivity extends Activity {
         });
     }
 
-    private void addSwipeListener() {
-        swipeTouchListener = new OnSwipeTouchListener(this) {
-            public void onSwipeRight() {
-                onBackPressed();
-            }
-        };
-
-        listView.setOnTouchListener(swipeTouchListener);
-    }
+//    private void addSwipeListener() {
+//        swipeTouchListener = new OnSwipeTouchListener(this) {
+//            public void onSwipeRight() {
+//                onBackPressed();
+//            }
+//        };
+//
+//        listView.setOnTouchListener(swipeTouchListener);
+//    }
 
     @Override
     public void onBackPressed() {

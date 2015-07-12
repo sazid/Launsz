@@ -35,8 +35,6 @@ public class AppsListActivity extends Activity {
         loadApps();
         loadListView();
         addClickListener();
-
-//        Log.v(AppsListActivity.class.getSimpleName(), filterAlphabet);
     }
 
 //    @Override
@@ -76,8 +74,6 @@ public class AppsListActivity extends Activity {
             app.label = ri.loadLabel(packageManager);
             app.name = ri.activityInfo.packageName;
             app.icon = ri.activityInfo.loadIcon(packageManager);
-
-//            Log.v("AppName", String.valueOf(app.label.toString().startsWith(filterAlphabet)));
 
             if (filterAlphabet == null || filterAlphabet.equals("*")) {
                 apps.add(app);

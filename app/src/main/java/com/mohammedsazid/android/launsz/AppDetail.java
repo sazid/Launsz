@@ -34,6 +34,15 @@ public class AppDetail implements Comparable<AppDetail> {
     CharSequence name;
     Drawable icon;
 
+    public AppDetail() {
+    }
+
+    public AppDetail(AppDetail another) {
+        this.label = another.label;
+        this.name = another.name;
+        this.icon = another.icon;
+    }
+
     @Override
     public int compareTo(AppDetail another) {
         int comparison = this.label.toString().compareTo(another.label.toString());

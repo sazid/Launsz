@@ -14,7 +14,13 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
+    <!--<style name="AppTheme" parent="@android:style/Theme.DeviceDefault.Wallpaper.NoTitleBar">-->
+    <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
+    </style>
+
+    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
     </style>

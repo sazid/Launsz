@@ -32,16 +32,6 @@
                 android:value="com.mohammedsazid.android.launsz.HomeActivity" />
         </activity>
 
-        <activity
-            android:name=".SettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".HomeActivity"
-            android:theme="@style/Theme.AppCompat">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.mohammedsazid.android.launsz.HomeActivity" />
-        </activity>
-
     </application>
 
 </manifest>

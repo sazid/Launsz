@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -132,6 +134,20 @@ public class AppsListActivity extends Activity {
                 overridePendingTransition(
                         android.R.anim.slide_in_left, android.R.anim.slide_out_right
                 );
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String packageName = apps.get(position).name.toString();
+                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                i.addCategory(Intent.CATEGORY_DEFAULT);
+                i.setData(Uri.parse("package:" + packageName));
+
+                startActivity(i);
+
+                return true;
             }
         });
     }

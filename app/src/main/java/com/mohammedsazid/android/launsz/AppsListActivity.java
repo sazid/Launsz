@@ -152,4 +152,10 @@ public class AppsListActivity extends Activity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+    }
+
 }

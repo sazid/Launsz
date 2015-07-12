@@ -26,6 +26,9 @@ package com.mohammedsazid.android.launsz;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,12 +39,18 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class HomeActivity extends Activity {
 
     public static final String EXTRA_INITIAL_ALPHABET = "initial_alphabet";
+
+    private PackageManager packageManager;
+    private List<AppDetail> apps;
+    private Set<String> matchedAlphabets;
 
     private Context mContext;
     private GridView alphabetGridView;
@@ -57,8 +66,44 @@ public class HomeActivity extends Activity {
         setContentView(R.layout.activity_home);
         mContext = this;
 
+        loadApps();
         loadAlphabetsGridView();
         addClickListener();
+    }
+
+    private void loadApps() {
+        packageManager = getPackageManager();
+        apps = new ArrayList<AppDetail>();
+
+        Intent i = new Intent(Intent.ACTION_MAIN, null);
+        i.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
+
+        List<String> initials = new ArrayList<String>();
+
+        for (ResolveInfo ri : availableActivities) {
+            AppDetail app = new AppDetail();
+
+            app.label = ri.loadLabel(packageManager);
+            app.name = ri.activityInfo.packageName;
+            app.icon = ri.activityInfo.loadIcon(packageManager);
+
+            apps.add(app);
+            initials.add(String.valueOf(app.label.toString().charAt(0)));
+        }
+
+        matchedAlphabets = new HashSet<String>();
+
+        for (String alphabet : alphabets) {
+            for (String initial : initials) {
+                if (initial.equals(alphabet)) {
+                    matchedAlphabets.add(initial);
+                }
+            }
+        }
+
+        java.util.Collections.sort(apps);
     }
 
     private void loadAlphabetsGridView() {
@@ -82,12 +127,51 @@ public class HomeActivity extends Activity {
                 // Set the height of each child view of the GridView
                 convertView.setMinimumHeight(heightPerRow / totalRowNum);
 
+                boolean matched = false;
+
+                if ("*".equals(alphabetsList.get(position))) {
+                    matched = true;
+                } else {
+                    for (String a : matchedAlphabets) {
+                        if (a.equals(alphabetsList.get(position))) {
+                            matched = true;
+                        }
+                    }
+                }
+
                 // Name of the app
                 TextView alphabetLabelView = (TextView)
                         convertView.findViewById(R.id.item_alphabet_textView);
                 alphabetLabelView.setText(alphabetsList.get(position));
 
+                if (!matched) {
+                    alphabetLabelView.setEnabled(false);
+                    alphabetLabelView.setTextColor(Color.DKGRAY);
+                }
+
                 return convertView;
+            }
+
+            @Override
+            public boolean isEnabled(int position) {
+//                return super.isEnabled(position);
+                if ("*".equals(alphabetsList.get(position))) {
+                    return true;
+                }
+
+                boolean matched = false;
+                for (String a : matchedAlphabets) {
+                    if (a.equals(alphabetsList.get(position))) {
+                        matched = true;
+                    }
+                }
+
+                return matched;
+            }
+
+            @Override
+            public boolean areAllItemsEnabled() {
+                return false;
             }
         };
 

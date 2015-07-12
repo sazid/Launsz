@@ -24,7 +24,10 @@
 package com.mohammedsazid.android.launsz;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Process;
 
@@ -46,12 +49,12 @@ public class SettingsActivity extends Activity {
     }
 
     public static void restartApp() {
-//        AlarmManager alm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-//        alm.set(
-//                AlarmManager.RTC,
-//                System.currentTimeMillis() + 1000,
-//                PendingIntent.getActivity(mContext, 0, new Intent(mContext, HomeActivity.class), 0)
-//        );
+        AlarmManager alm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        alm.set(
+                AlarmManager.RTC,
+                System.currentTimeMillis() + 1000,
+                PendingIntent.getActivity(mContext, 0, new Intent(mContext, HomeActivity.class), 0)
+        );
         Process.killProcess(Process.myPid());
     }
 

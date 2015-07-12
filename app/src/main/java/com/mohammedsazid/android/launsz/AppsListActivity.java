@@ -25,6 +25,7 @@ public class AppsListActivity extends Activity {
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private ListView listView;
+    private TextView alphabetTextView;
 //    private OnSwipeTouchListener swipeTouchListener;
 
     private String filterAlphabet = null;
@@ -76,6 +77,8 @@ public class AppsListActivity extends Activity {
 
     private void loadListView() {
         listView = (ListView) findViewById(R.id.apps_listview);
+        alphabetTextView = (TextView) findViewById(R.id.alphabet_textview);
+        alphabetTextView.setText(filterAlphabet);
 
         ArrayAdapter<AppDetail> adapter = new ArrayAdapter<AppDetail>(
                 this,

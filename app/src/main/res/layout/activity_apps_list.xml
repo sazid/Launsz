@@ -31,10 +31,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.mohammedsazid.android.launsz.AppsListActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="*"
+        android:paddingRight="16dp"
+        android:gravity="end"
+        android:id="@+id/alphabet_textview"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <ListView
         android:divider="@android:color/transparent"
         android:id="@+id/apps_listview"
+        android:layout_below="@+id/alphabet_textview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

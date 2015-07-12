@@ -25,13 +25,25 @@ package com.mohammedsazid.android.launsz;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 
 /**
  * Created by sazid on 7/12/2015.
  */
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        if (getString(R.string.restart_app_title).equals(preference.getTitle())) {
+            SettingsActivity.restartApp();
+            return true;
+        }
+
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

@@ -24,15 +24,14 @@
 package com.mohammedsazid.android.launsz;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Process;
 
 
 public class SettingsActivity extends Activity {
+
+    public static Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,21 +41,18 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+
+        SettingsActivity.mContext = this;
     }
 
-    private void restartApp() {
-        AlarmManager alm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        alm.set(
-                AlarmManager.RTC,
-                System.currentTimeMillis() + 1000,
-                PendingIntent.getActivity(this, 0, new Intent(this, HomeActivity.class), 0)
-        );
+    public static void restartApp() {
+//        AlarmManager alm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+//        alm.set(
+//                AlarmManager.RTC,
+//                System.currentTimeMillis() + 1000,
+//                PendingIntent.getActivity(mContext, 0, new Intent(mContext, HomeActivity.class), 0)
+//        );
         Process.killProcess(Process.myPid());
-    }
-
-    @Override
-    protected void onPause() {
-        restartApp();
     }
 
     @Override

@@ -23,14 +23,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--<ListPreference-->
-    <!--android:defaultValue="Dark"-->
-    <!--android:dialogTitle="Choose theme"-->
-    <!--android:entries="@array/theme_entries"-->
-    <!--android:entryValues="@array/theme_entry_values"-->
-    <!--android:key="theme_key"-->
-    <!--android:summary="Dark"-->
-    <!--android:title="Theme" />-->
+    <Preference
+        android:icon="@drawable/ic_warning"
+        android:title="@string/restart_app_title"
+        android:summary="@string/restart_app_summ" />
 
     <PreferenceCategory android:title="General">
 

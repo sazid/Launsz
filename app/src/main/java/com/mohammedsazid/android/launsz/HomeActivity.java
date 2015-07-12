@@ -26,10 +26,12 @@ package com.mohammedsazid.android.launsz;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -50,6 +52,7 @@ public class HomeActivity extends Activity {
 
     public static final String EXTRA_INITIAL_ALPHABET = "initial_alphabet";
 
+    private SharedPreferences sharedPrefs;
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private Set<String> matchedAlphabets;
@@ -67,6 +70,7 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mContext = this;
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         loadApps();
         loadAlphabetsGridView();
@@ -146,9 +150,15 @@ public class HomeActivity extends Activity {
                         convertView.findViewById(R.id.item_alphabet_textView);
                 alphabetLabelView.setText(alphabetsList.get(position));
 
+                int color_enabled = sharedPrefs.getInt(
+                        getString(R.string.color_enabled_key), R.color.color_enabled_default);
+                int color_disabled = sharedPrefs.getInt(
+                        getString(R.string.color_disabled_key), R.color.color_disabled_default);
+
+                alphabetLabelView.setTextColor(color_enabled);
                 if (!matched) {
                     alphabetLabelView.setEnabled(false);
-                    alphabetLabelView.setTextColor(Color.DKGRAY);
+                    alphabetLabelView.setTextColor(color_disabled);
                 }
 
                 return convertView;
@@ -206,11 +216,15 @@ public class HomeActivity extends Activity {
                                 public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
 //                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
 
+                                    Intent i;
+
                                     switch (position) {
                                         case 0:
+                                            i = new Intent(mContext, SettingsActivity.class);
+                                            startActivity(i);
                                             break;
                                         case 1:
-                                            Intent i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                            i = new Intent(Intent.ACTION_SET_WALLPAPER);
                                             startActivity(Intent.createChooser(i, "Select Wallpaper"));
                                             break;
                                         case 2:

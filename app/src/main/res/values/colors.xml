@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ The MIT License (MIT)
   ~
   ~ Copyright (c) 2015 Mohammed Sazid-Al-Rashid
@@ -21,33 +22,9 @@
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
 
-    <!--<ListPreference-->
-    <!--android:defaultValue="Dark"-->
-    <!--android:dialogTitle="Choose theme"-->
-    <!--android:entries="@array/theme_entries"-->
-    <!--android:entryValues="@array/theme_entry_values"-->
-    <!--android:key="theme_key"-->
-    <!--android:summary="Dark"-->
-    <!--android:title="Theme" />-->
+    <item type="color" name="color_enabled_default">0xffffffff</item>
+    <item type="color" name="color_disabled_default">0xff444444</item>
 
-    <PreferenceCategory android:title="Colors">
-
-        <net.margaritov.preference.colorpicker.ColorPickerPreference
-            android:key="@string/color_enabled_key"
-            android:defaultValue="@color/color_enabled_default"
-            android:title="Primary color"
-            android:summary="Enabled item color"
-            alphaSlider="true" />
-
-        <net.margaritov.preference.colorpicker.ColorPickerPreference
-            android:key="@string/color_disabled_key"
-            android:defaultValue="@color/color_disabled_default"
-            android:title="Secondary color"
-            android:summary="Disabled item color"
-            alphaSlider="true" />
-
-    </PreferenceCategory>
-
-</PreferenceScreen>
+</resources>

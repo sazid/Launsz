@@ -32,7 +32,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Process;
 import android.preference.PreferenceManager;
-import android.view.WindowManager;
 
 
 public class SettingsActivity extends Activity {
@@ -53,7 +52,7 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        dimBackground(sharedPrefs);
+        HelperClass.dimBackground(this, sharedPrefs);
     }
 
     @Override
@@ -67,28 +66,7 @@ public class SettingsActivity extends Activity {
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
 
-        dimBackground(sharedPrefs);
-    }
-
-    private void dimBackground(SharedPreferences sharedPrefs) {
-        float dim_percentage = sharedPrefs.getInt(
-                getString(R.string.bg_dim_amount_key),
-                0
-        );
-
-        boolean dim_enabled = sharedPrefs.getBoolean(
-                getString(R.string.bg_dim_key),
-                false
-        );
-
-        if (dim_enabled) {
-            WindowManager.LayoutParams windowManager = getWindow().getAttributes();
-            windowManager.dimAmount = (dim_percentage / 100);
-
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        }
+        HelperClass.dimBackground(this, sharedPrefs);
     }
 
     @Override

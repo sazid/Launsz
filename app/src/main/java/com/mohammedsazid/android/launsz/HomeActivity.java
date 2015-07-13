@@ -39,7 +39,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -75,31 +74,10 @@ public class HomeActivity extends Activity {
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
 
-    private void dimBackground(SharedPreferences sharedPrefs) {
-        float dim_percentage = sharedPrefs.getInt(
-                getString(R.string.bg_dim_amount_key),
-                0
-        );
-
-        boolean dim_enabled = sharedPrefs.getBoolean(
-                getString(R.string.bg_dim_key),
-                false
-        );
-
-        if (dim_enabled) {
-            WindowManager.LayoutParams windowManager = getWindow().getAttributes();
-            windowManager.dimAmount = (dim_percentage / 100);
-
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        dimBackground(sharedPrefs);
+        HelperClass.dimBackground(this, sharedPrefs);
     }
 
     @Override
@@ -118,12 +96,18 @@ public class HomeActivity extends Activity {
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         musicCtrlEnabled = sharedPrefs.getBoolean(getString(R.string.music_ctrl_key), false);
-        dimBackground(sharedPrefs);
+        HelperClass.dimBackground(this, sharedPrefs);
 
         loadApps();
         loadAlphabetsGridView();
         addClickListener();
         addSwipeListener(alphabetGridView);
+    }
+
+    @Override
+    public void onBackPressed() {
+        return;
+//        super.onBackPressed();
     }
 
     private void addSwipeListener(View v) {
@@ -419,9 +403,4 @@ public class HomeActivity extends Activity {
                 .show();
     }
 
-    @Override
-    public void onBackPressed() {
-        return;
-//        super.onBackPressed();
-    }
 }

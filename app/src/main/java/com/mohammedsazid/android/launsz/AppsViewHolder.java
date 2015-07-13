@@ -29,7 +29,7 @@ import android.widget.TextView;
 /**
  * Created by sazid on 7/14/2015.
  */
-public static class AppsViewHolder {
+public class AppsViewHolder {
 
     ImageView appIcon;
     TextView appLabel;

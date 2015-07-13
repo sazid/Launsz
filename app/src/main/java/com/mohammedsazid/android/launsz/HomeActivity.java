@@ -75,20 +75,6 @@ public class HomeActivity extends Activity {
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        HelperClass.dimBackground(this, sharedPrefs);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (musicCtrlEnabled) {
-            swipeTouchListener.getGestureDetector().onTouchEvent(ev);
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
@@ -102,6 +88,20 @@ public class HomeActivity extends Activity {
         loadAlphabetsGridView();
         addClickListener();
         addSwipeListener(alphabetGridView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        HelperClass.dimBackground(this, sharedPrefs);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (musicCtrlEnabled) {
+            swipeTouchListener.getGestureDetector().onTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     @Override

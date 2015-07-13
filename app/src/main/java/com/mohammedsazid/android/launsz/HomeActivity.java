@@ -367,6 +367,7 @@ public class HomeActivity extends Activity {
             }
         });
 
+/*
         alphabetGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -381,6 +382,7 @@ public class HomeActivity extends Activity {
                 return false;
             }
         });
+*/
     }
 
     private void showMenu() {

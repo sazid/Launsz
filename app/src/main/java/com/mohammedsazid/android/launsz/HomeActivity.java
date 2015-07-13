@@ -31,8 +31,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -40,6 +44,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -58,6 +63,8 @@ public class HomeActivity extends Activity {
     private PackageManager packageManager;
     private List<AppDetail> apps;
     private Set<String> matchedAlphabets;
+    private OnSwipeTouchListener swipeTouchListener;
+    private boolean musicCtrlEnabled;
 
     private Context mContext;
     private GridView alphabetGridView;
@@ -96,17 +103,57 @@ public class HomeActivity extends Activity {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (musicCtrlEnabled) {
+            swipeTouchListener.getGestureDetector().onTouchEvent(ev);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mContext = this;
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+        musicCtrlEnabled = sharedPrefs.getBoolean(getString(R.string.music_ctrl_key), false);
         dimBackground(sharedPrefs);
 
         loadApps();
         loadAlphabetsGridView();
         addClickListener();
+        addSwipeListener(alphabetGridView);
+    }
+
+    private void addSwipeListener(View v) {
+        if (!musicCtrlEnabled) {
+            return;
+        }
+
+        swipeTouchListener = new OnSwipeTouchListener(this) {
+            public void onSwipeRight() {
+                Toast.makeText(HomeActivity.this, "Next", Toast.LENGTH_SHORT).show();
+                musicControl("next");
+            }
+
+            public void onSwipeLeft() {
+                Toast.makeText(HomeActivity.this, "Previous", Toast.LENGTH_SHORT).show();
+                musicControl("previous");
+            }
+
+            public void onSwipeTop() {
+                Toast.makeText(HomeActivity.this, "Play/Pause", Toast.LENGTH_SHORT).show();
+                musicControl("playpause");
+            }
+
+            public void onSwipeBottom() {
+                Toast.makeText(HomeActivity.this, "Stop", Toast.LENGTH_SHORT).show();
+                musicControl("stop");
+            }
+        };
+
+        v.setOnTouchListener(swipeTouchListener);
     }
 
     private void loadApps() {
@@ -125,7 +172,7 @@ public class HomeActivity extends Activity {
 
             app.label = ri.loadLabel(packageManager);
             app.name = ri.activityInfo.packageName;
-            app.icon = ri.activityInfo.loadIcon(packageManager);
+//            app.icon = ri.activityInfo.loadIcon(packageManager);
 
             apps.add(app);
             initials.add(String.valueOf(app.label.toString().charAt(0)));
@@ -169,6 +216,8 @@ public class HomeActivity extends Activity {
 
                 if ("*".equals(alphabetsList.get(position))) {
                     matched = true;
+                } else if ("#".equals(alphabetsList.get(position))) {
+                    matched = true;
                 } else {
                     for (String a : matchedAlphabets) {
                         if (a.equals(alphabetsList.get(position))) {
@@ -209,6 +258,8 @@ public class HomeActivity extends Activity {
 //                return super.isEnabled(position);
                 if ("*".equals(alphabetsList.get(position))) {
                     return true;
+                } else if ("#".equals(alphabetsList.get(position))) {
+                    return true;
                 }
 
                 boolean matched = false;
@@ -230,16 +281,89 @@ public class HomeActivity extends Activity {
         alphabetGridView.setAdapter(adapter);
     }
 
+    private void musicControl(String mode) {
+        Intent downIntent;
+        Intent upIntent;
+
+        KeyEvent downEvent;
+        KeyEvent upEvent;
+        long eventtime = SystemClock.uptimeMillis();
+
+        final String CMDTOGGLEPAUSE = "togglepause";
+        final String CMDPAUSE = "pause";
+        final String CMDPREVIOUS = "previous";
+        final String CMDNEXT = "next";
+        final String SERVICECMD = "com.android.music.musicservicecommand";
+        final String CMDNAME = "command";
+        final String CMDSTOP = "stop";
+
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        switch (mode) {
+            case "playpause":
+                downIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+                downEvent = new KeyEvent(
+                        eventtime,
+                        eventtime,
+                        KeyEvent.ACTION_DOWN,
+                        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
+                        0);
+                downIntent.putExtra(Intent.EXTRA_KEY_EVENT, downEvent);
+                sendOrderedBroadcast(downIntent, null);
+
+                upIntent = new Intent(Intent.ACTION_MEDIA_BUTTON, null);
+                upEvent = new KeyEvent(
+                        eventtime,
+                        eventtime,
+                        KeyEvent.ACTION_UP,
+                        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE,
+                        0);
+                upIntent.putExtra(Intent.EXTRA_KEY_EVENT, upEvent);
+                sendOrderedBroadcast(upIntent, null);
+                break;
+            case "stop":
+                if (mAudioManager.isMusicActive()) {
+                    Intent i = new Intent(SERVICECMD);
+                    i.putExtra(CMDNAME, CMDSTOP);
+                    HomeActivity.this.sendBroadcast(i);
+                }
+                break;
+            case "next":
+                if (mAudioManager.isMusicActive()) {
+                    Intent i = new Intent(SERVICECMD);
+                    i.putExtra(CMDNAME, CMDNEXT);
+                    HomeActivity.this.sendBroadcast(i);
+                }
+                break;
+            case "previous":
+                if (mAudioManager.isMusicActive()) {
+                    Intent i = new Intent(SERVICECMD);
+                    i.putExtra(CMDNAME, CMDPREVIOUS);
+                    HomeActivity.this.sendBroadcast(i);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Please use these commands only: 'playpause', 'next', 'stop', 'previous");
+        }
+    }
+
     private void addClickListener() {
         alphabetGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String alphabet = alphabetsList.get(position);
 
-                Intent i = new Intent(mContext, AppsListActivity.class);
-                i.putExtra(HomeActivity.EXTRA_INITIAL_ALPHABET, alphabet);
+                if ("#".equals(alphabet)) {
+//                    HomeActivity.this.musicControl("playpause");
+                    //TODO: Do something with the #
+                    HomeActivity.this.showMenu();
+                } else {
+                    Intent i = new Intent(mContext, AppsListActivity.class);
+                    i.putExtra(HomeActivity.EXTRA_INITIAL_ALPHABET, alphabet);
 
-                startActivity(i);
+                    startActivity(i);
+                }
+
             }
         });
 
@@ -248,37 +372,7 @@ public class HomeActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if ("*".equals(alphabetsList.get(position))) {
 
-                    new MaterialDialog.Builder(mContext)
-                            .title("Menu")
-                            .items(R.array.menu_items)
-                            .itemsCallback(new MaterialDialog.ListCallback() {
-                                @Override
-                                public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
-//                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
-
-                                    Intent i;
-
-                                    switch (position) {
-                                        case 0:
-                                            i = new Intent(mContext, SettingsActivity.class);
-                                            startActivity(i);
-                                            break;
-                                        case 1:
-                                            i = new Intent(Intent.ACTION_SET_WALLPAPER);
-                                            startActivity(Intent.createChooser(i, "Select Wallpaper"));
-                                            break;
-                                        case 2:
-                                            new MaterialDialog.Builder(mContext)
-                                                    .title("About")
-                                                    .content(R.string.about_summary)
-                                                    .show();
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }
-                            })
-                            .show();
+                    HomeActivity.this.showMenu();
 
                     return true;
                 }
@@ -287,6 +381,40 @@ public class HomeActivity extends Activity {
                 return false;
             }
         });
+    }
+
+    private void showMenu() {
+        new MaterialDialog.Builder(mContext)
+                .title("Menu")
+                .items(R.array.menu_items)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+//                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
+
+                        Intent i;
+
+                        switch (position) {
+                            case 0:
+                                i = new Intent(mContext, SettingsActivity.class);
+                                startActivity(i);
+                                break;
+                            case 1:
+                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                startActivity(Intent.createChooser(i, "Select Wallpaper"));
+                                break;
+                            case 2:
+                                new MaterialDialog.Builder(mContext)
+                                        .title("About")
+                                        .content(R.string.about_summary)
+                                        .show();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                })
+                .show();
     }
 
     @Override

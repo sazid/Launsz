@@ -40,6 +40,12 @@
 
         <SwitchPreference
             android:defaultValue="false"
+            android:key="@string/music_ctrl_key"
+            android:summary="@string/music_ctrl_summ"
+            android:title="Music Control" />
+
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="@string/bg_dim_key"
             android:summaryOff="Background is normal"
             android:summaryOn="Background is dimmed"

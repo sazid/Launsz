@@ -103,25 +103,35 @@ public class AppsListActivity extends Activity {
                 R.layout.apps_list_item,
                 apps
         ) {
+
+            AppsViewHolder holder = null;
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null) {
                     convertView = getLayoutInflater().inflate(R.layout.apps_list_item, null);
+
+                    holder = new AppsViewHolder();
+                    holder.appIcon = (ImageView) convertView.findViewById(R.id.item_app_icon);
+                    holder.appLabel = (TextView) convertView.findViewById(R.id.item_app_label);
+                    convertView.setTag(holder);
+                } else {
+                    holder = (AppsViewHolder) convertView.getTag();
                 }
 
                 // Icon of the app
-                ImageView appIcon = (ImageView) convertView.findViewById(R.id.item_app_icon);
+                ImageView appIcon = holder.appIcon;
                 appIcon.setImageDrawable(apps.get(position).icon);
 //                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(80, 80);
 //                appIcon.setLayoutParams(params);
 
                 // Name of the app
-                TextView appLabel = (TextView) convertView.findViewById(R.id.item_app_label);
+                TextView appLabel = holder.appLabel;
                 appLabel.setText(apps.get(position).label);
                 appLabel.setTextColor(color_enabled);
 
                 // Package name of the app
-//                TextView appName = (TextView) convertView.findViewById(R.id.item_app_name);
+//                TextView appName = holder.appName;
 //                appName.setText(apps.get(position).name);
 
                 return convertView;

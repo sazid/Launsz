@@ -33,7 +33,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -64,8 +63,9 @@ public class HomeActivity extends Activity {
     private GridView alphabetGridView;
     private List<String> alphabetsList;
     private String[] alphabets = new String[]{
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-            "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "*"
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "#", "*",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
 
     private void dimBackground(SharedPreferences sharedPrefs) {
@@ -190,8 +190,6 @@ public class HomeActivity extends Activity {
                         getString(R.string.alphabet_bold_key),
                         false
                 );
-
-                Log.v("Colors", "Enabled: " + String.valueOf(color_enabled) + ", Disabled: " + String.valueOf(color_disabled));
 
                 alphabetLabelView.setTextColor(color_enabled);
                 if (!matched) {

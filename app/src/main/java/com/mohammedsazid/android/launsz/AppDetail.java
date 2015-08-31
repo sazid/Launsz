@@ -30,9 +30,9 @@ import android.graphics.drawable.Drawable;
  */
 public class AppDetail implements Comparable<AppDetail> {
 
-    CharSequence label;
-    CharSequence name;
-    Drawable icon;
+    public CharSequence label;
+    public CharSequence name;
+    public Drawable icon;
 
     public AppDetail() {
     }

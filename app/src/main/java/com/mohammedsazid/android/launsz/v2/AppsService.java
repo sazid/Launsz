@@ -25,9 +25,13 @@ package com.mohammedsazid.android.launsz.v2;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.mohammedsazid.android.launsz.AppDetail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +47,9 @@ public class AppsService extends Service {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
+
+    private PackageManager packageManager;
+    public static List<AppDetail> apps;
 
     private final IBinder appsServiceBinder = new AppsServiceBinder();
 
@@ -66,11 +73,32 @@ public class AppsService extends Service {
     }
 
     public void loadAppsDetails() {
+        packageManager = getPackageManager();
+
         if (NEEDS_REFRESH) {
+            apps = new ArrayList<>();
+
+            Intent i = new Intent(Intent.ACTION_MAIN, null);
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
+
+            for (ResolveInfo ri : availableActivities) {
+                AppDetail app = new AppDetail();
+
+                app.label = ri.loadLabel(packageManager);
+                app.name = ri.activityInfo.packageName;
+                app.icon = ri.activityInfo.loadIcon(packageManager);
+
+                apps.add(app);
+            }
+
+            java.util.Collections.sort(apps);
+
             alphabetsList = new ArrayList<String>();
             alphabetsList.addAll(Arrays.asList(alphabets));
 
-            NEEDS_REFRESH = !NEEDS_REFRESH;
+            NEEDS_REFRESH = false;
         }
     }
 

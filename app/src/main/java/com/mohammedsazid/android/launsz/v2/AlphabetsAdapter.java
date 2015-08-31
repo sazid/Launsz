@@ -57,6 +57,13 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
         return 24;
     }
 
+    // TODO: implement get item type
+    /*
+    > The very first icon will be a history icon (which will contain the user's most recently
+      installed apps
+    > The last icon will be a globe (which contains all the apps)
+     */
+
     static class AlphabetsViewHolder extends RecyclerView.ViewHolder {
 
         TextView alphabetTv;

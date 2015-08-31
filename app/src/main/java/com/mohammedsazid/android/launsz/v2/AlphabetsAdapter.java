@@ -23,10 +23,12 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.R;
@@ -35,48 +37,98 @@ import java.util.List;
 
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
+    private static final int ALPHABET_TYPE = 0;
+    private static final int HISTORY_TYPE = 1;
+    private static final int ALL_TYPE = 2;
+    private static final int MENU_TYPE = 3;
+
+    FragmentActivity activity;
     List<String> alphabetsList;
 
-    public AlphabetsAdapter(List<String> alphabetsList) {
+    public AlphabetsAdapter(FragmentActivity activity, List<String> alphabetsList) {
+        this.activity = activity;
         this.alphabetsList = alphabetsList;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
-        viewHolder.alphabetTv.setText(alphabetsList.get(position));
+
+        switch (viewHolder.viewType) {
+            case ALPHABET_TYPE:
+                // because first 2 items are icons and the last one is an icon too
+                int posForAlphabets = position - 2;
+
+                viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
+                break;
+            case MENU_TYPE:
+                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
+                break;
+            case HISTORY_TYPE:
+                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
+                break;
+            case ALL_TYPE:
+                viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
+                break;
+        }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.alphabets_list_item, parent, false);
+        int layoutResourceId;
 
-        AlphabetsViewHolder viewHolder = new AlphabetsViewHolder(view);
+        if (viewType == ALPHABET_TYPE) {
+            layoutResourceId = R.layout.alphabets_list_item;
+        } else {
+            layoutResourceId = R.layout.alphabets_icon_list_item;
+        }
+
+        view = LayoutInflater.from(parent.getContext()).inflate(layoutResourceId, parent, false);
+
+        AlphabetsViewHolder viewHolder = new AlphabetsViewHolder(view, viewType);
 
         return viewHolder;
     }
 
     @Override
     public int getItemCount() {
-        return alphabetsList.size();
+        // 3 icon types are added to existing list of alphabets
+        return alphabetsList.size() + 3;
     }
 
-    // TODO: implement get item type
-    /*
-    > The very first icon will be a history icon (which will contain the user's most recently
-      installed apps
-    > The last icon will be a globe (which contains all the apps)
-     */
+    @Override
+    public int getItemViewType(int position) {
+
+        if (position == 0) {
+            return HISTORY_TYPE;
+        } else if (position == 1) {
+            return ALL_TYPE;
+        } else if (position == (getItemCount() - 1)) {
+            return MENU_TYPE;
+        }
+
+        return ALPHABET_TYPE;
+    }
 
     static class AlphabetsViewHolder extends RecyclerView.ViewHolder {
 
+        protected int viewType;
         TextView alphabetTv;
+        ImageView iconIv;
 
-        public AlphabetsViewHolder(View itemView) {
+        public AlphabetsViewHolder(View itemView, int viewType) {
             super(itemView);
 
-            alphabetTv = (TextView) itemView.findViewById(R.id.item_alphabet_textView);
+            this.viewType = viewType;
+
+            if (viewType == ALPHABET_TYPE) {
+                alphabetTv = (TextView) itemView.findViewById(R.id.item_alphabet_textView);
+            } else {
+                iconIv = (ImageView) itemView.findViewById(R.id.item_alphabet_icon_imageview);
+            }
+
+            itemView.setClickable(true);
         }
 
     }

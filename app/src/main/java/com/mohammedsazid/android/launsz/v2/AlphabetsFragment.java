@@ -70,7 +70,7 @@ public class AlphabetsFragment extends Fragment {
         alphabetsList = new ArrayList<String>();
         alphabetsList.addAll(Arrays.asList(alphabets));
 
-        AlphabetsAdapter adapter = new AlphabetsAdapter(alphabetsList);
+        AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
         alphabetsRv.setAdapter(adapter);
         alphabetsRv.setLayoutManager(new GridLayoutManager(
                 getActivity(),

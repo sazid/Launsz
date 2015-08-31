@@ -23,7 +23,12 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -39,6 +44,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AlphabetsFragment extends Fragment {
+
+    private AppsService appsService;
+    boolean isAppsServiceBound = false;
 
     private List<String> alphabetsList;
     private String[] alphabets = new String[]{
@@ -70,13 +78,41 @@ public class AlphabetsFragment extends Fragment {
         alphabetsList = new ArrayList<String>();
         alphabetsList.addAll(Arrays.asList(alphabets));
 
-        AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
-        alphabetsRv.setAdapter(adapter);
+        // Set the layout manager and other stuffs
         alphabetsRv.setLayoutManager(new GridLayoutManager(
                 getActivity(),
                 4,
                 GridLayoutManager.VERTICAL,
                 false));
+        alphabetsRv.setHasFixedSize(true);
+
+        // Bind to the service
+        Intent serviceIntent = new Intent(getActivity(), AppsService.class);
+        getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
+
+        AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
+        alphabetsRv.setAdapter(adapter);
     }
+
+    private void loadAppsList() {
+
+    }
+
+    // Every service needs to be bound through a ServiceConnection object
+    private ServiceConnection appsServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AppsService.AppsServiceBinder binder = (AppsService.AppsServiceBinder) service;
+            appsService = binder.getService();
+            isAppsServiceBound = true;
+
+            appsService.logMsg("This is a simple message sent from the fragment through the service.");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isAppsServiceBound = false;
+        }
+    };
 
 }

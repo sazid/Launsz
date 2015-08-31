@@ -22,6 +22,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:selectableItemBackground"
@@ -37,6 +38,7 @@
         android:gravity="center"
         android:text="A"
         android:textColor="@color/white"
-        android:textSize="36sp" />
+        android:textSize="36dp"
+        tools:ignore="SpUsage" />
 
 </RelativeLayout>

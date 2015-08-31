@@ -46,9 +46,9 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
+        <!--<item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>-->
     </style>
 
 </resources>

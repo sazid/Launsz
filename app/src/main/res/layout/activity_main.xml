@@ -39,7 +39,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/app_dock_container"
         android:layout_below="@+id/clock"
-        android:padding="16dp" />
+        android:padding="24dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"/>
 
     <FrameLayout
         android:id="@+id/app_dock_container"

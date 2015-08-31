@@ -36,6 +36,6 @@
         android:layout_centerInParent="true"
         android:gravity="center"
         android:text="A"
-        android:textSize="28sp" />
+        android:textSize="36sp" />
 
 </RelativeLayout>

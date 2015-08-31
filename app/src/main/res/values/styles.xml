@@ -20,9 +20,9 @@
         <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
     </style>
 
-    <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
+        <!--<item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>-->
     </style>
 
 </resources>

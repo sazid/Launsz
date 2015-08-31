@@ -22,6 +22,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.0.0'
     compile 'com.afollestad:material-dialogs:0.7.6.0'
     compile 'com.pavelsikun:material-seekbar-preference:0.7+'
     compile project(':libs:ColorPickerPreference')

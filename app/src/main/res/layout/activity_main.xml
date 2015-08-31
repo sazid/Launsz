@@ -51,23 +51,29 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <Button
+            <ImageButton
                 android:id="@+id/previousTrackBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="@string/previous_track" />
+                android:background="@android:color/transparent"
+                android:scaleType="center"
+                android:src="@drawable/ic_previous_track" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/playPauseTrackBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="@string/play_pause_track" />
+                android:background="@android:color/transparent"
+                android:scaleType="center"
+                android:src="@drawable/ic_playpause_white" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/nextTrackBtn"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:text="@string/next_track" />
+                android:background="@android:color/transparent"
+                android:scaleType="center"
+                android:src="@drawable/ic_next_track" />
 
         </LinearLayout>
 

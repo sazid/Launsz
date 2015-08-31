@@ -24,13 +24,14 @@
 package com.mohammedsazid.android.launsz.v2;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import com.mohammedsazid.android.launsz.R;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
 
     FrameLayout alphabetsFragmentContainer;
 

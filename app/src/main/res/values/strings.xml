@@ -30,4 +30,7 @@
 
     <string name="restart_app_title">Restart Launsz</string>
     <string name="restart_app_summ">Please restart the launcher (or press the back button) for the settings to take effect</string>
+    <string name="previous_track"><![CDATA[<]]></string>
+    <string name="play_pause_track"><![CDATA[<>]]></string>
+    <string name="next_track"><![CDATA[>]]></string>
 </resources>

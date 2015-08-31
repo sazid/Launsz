@@ -31,14 +31,12 @@
 
     <ImageButton
         android:id="@+id/item_alphabet_icon_imageview"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:background="@android:color/transparent"
-        android:clickable="true"
-        android:focusable="true"
+        android:background="?android:selectableItemBackground"
         android:gravity="center"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_globe_white" />
 
 </RelativeLayout>

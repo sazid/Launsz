@@ -38,7 +38,7 @@ import java.util.List;
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     private static final int ALPHABET_TYPE = 0;
-    private static final int HISTORY_TYPE = 1;
+//    private static final int HISTORY_TYPE = 1;
     private static final int ALL_TYPE = 2;
     private static final int MENU_TYPE = 3;
 
@@ -56,17 +56,17 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
-                // because first 2 items are icons and the last one is an icon too
-                int posForAlphabets = position - 2;
+                // because first and the last items are icons
+                int posForAlphabets = position - 1;
 
                 viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
                 break;
             case MENU_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
                 break;
-            case HISTORY_TYPE:
-                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
-                break;
+//            case HISTORY_TYPE:
+//                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
+//                break;
             case ALL_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
                 break;
@@ -93,16 +93,17 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        // 3 icon types are added to existing list of alphabets
-        return alphabetsList.size() + 3;
+        // 2 icon types are added to existing list of alphabets
+        return alphabetsList.size() + 2;
     }
 
     @Override
     public int getItemViewType(int position) {
 
-        if (position == 0) {
+        /*if (position == 0) {
             return HISTORY_TYPE;
-        } else if (position == 1) {
+        } else if (position == 1) {*/
+        if (position == 0) {
             return ALL_TYPE;
         } else if (position == (getItemCount() - 1)) {
             return MENU_TYPE;

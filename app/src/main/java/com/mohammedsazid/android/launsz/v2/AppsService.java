@@ -35,6 +35,9 @@ import java.util.List;
 
 public class AppsService extends Service {
 
+    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
+    public static boolean NEEDS_REFRESH = true;
+
     public static List<String> alphabetsList;
     private String[] alphabets = new String[]{
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -47,6 +50,13 @@ public class AppsService extends Service {
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        loadAppsDetails();
+
+        return START_STICKY;
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         return appsServiceBinder;
     }
@@ -55,11 +65,19 @@ public class AppsService extends Service {
         Log.v(AppsService.class.getSimpleName(), msg);
     }
 
-    public void loadAppsDetail(ICallback iCallback) {
+    public void loadAppsDetails() {
+        if (NEEDS_REFRESH) {
+            alphabetsList = new ArrayList<String>();
+            alphabetsList.addAll(Arrays.asList(alphabets));
+
+            NEEDS_REFRESH = !NEEDS_REFRESH;
+        }
+    }
+
+    public void getAppsDetails(ICallback iCallback) {
         iCallback.onStart();
 
-        alphabetsList = new ArrayList<String>();
-        alphabetsList.addAll(Arrays.asList(alphabets));
+        loadAppsDetails();
 
         iCallback.onFinish();
     }

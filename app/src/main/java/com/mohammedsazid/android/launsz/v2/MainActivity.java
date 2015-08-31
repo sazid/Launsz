@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.FrameLayout;
@@ -48,6 +49,10 @@ public class MainActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.alphabets_fragment_container, new AlphabetsFragment())
                 .commit();
+
+        // Start the service to keep it running in the background
+        Intent appsServiceIntent = new Intent(this, AppsService.class);
+        startService(appsServiceIntent);
     }
 
 }

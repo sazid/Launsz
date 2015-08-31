@@ -39,8 +39,6 @@ import android.view.ViewGroup;
 
 import com.mohammedsazid.android.launsz.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AlphabetsFragment extends Fragment {
@@ -89,12 +87,21 @@ public class AlphabetsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        getActivity().unbindService(appsServiceConnection);
+//        getActivity().unbindService(appsServiceConnection);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadAppsList();
     }
 
     private void loadAppsList() {
         // Bind to the service
         Intent serviceIntent = new Intent(getActivity(), AppsService.class);
+
+        // Start the service if it's not already running
+        getActivity().startService(serviceIntent);
         getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -108,7 +115,7 @@ public class AlphabetsFragment extends Fragment {
 
             appsService.logMsg("This is a simple message sent from the fragment through the service.");
 
-            appsService.loadAppsDetail(new ICallback() {
+            appsService.getAppsDetails(new ICallback() {
                 @Override
                 public void onStart() {
                 }

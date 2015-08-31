@@ -34,8 +34,13 @@ import android.view.ViewGroup;
 
 import com.mohammedsazid.android.launsz.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class AlphabetsFragment extends Fragment {
 
+    private List<String> alphabetsList;
     private String[] alphabets = new String[]{
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
@@ -56,16 +61,22 @@ public class AlphabetsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_alphabets, container, false);
 
         bindViews(view);
+        loadGridView();
 
-        AlphabetsAdapter adapter = new AlphabetsAdapter();
+        return view;
+    }
+
+    private void loadGridView() {
+        alphabetsList = new ArrayList<String>();
+        alphabetsList.addAll(Arrays.asList(alphabets));
+
+        AlphabetsAdapter adapter = new AlphabetsAdapter(alphabetsList);
         alphabetsRv.setAdapter(adapter);
         alphabetsRv.setLayoutManager(new GridLayoutManager(
                 getActivity(),
                 4,
                 GridLayoutManager.VERTICAL,
                 false));
-
-        return view;
     }
 
 }

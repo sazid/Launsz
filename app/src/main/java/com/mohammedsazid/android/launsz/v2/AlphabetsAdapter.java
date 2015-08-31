@@ -31,15 +31,20 @@ import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.R;
 
+import java.util.List;
+
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
-    public AlphabetsAdapter() {
+    List<String> alphabetsList;
+
+    public AlphabetsAdapter(List<String> alphabetsList) {
+        this.alphabetsList = alphabetsList;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
-        viewHolder.alphabetTv.setText(String.valueOf(position));
+        viewHolder.alphabetTv.setText(alphabetsList.get(position));
     }
 
     @Override
@@ -54,7 +59,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return 24;
+        return alphabetsList.size();
     }
 
     // TODO: implement get item type

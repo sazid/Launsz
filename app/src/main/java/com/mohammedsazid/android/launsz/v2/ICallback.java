@@ -23,51 +23,13 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.util.Log;
+// Interface for a simple callback mechanism
+public interface ICallback {
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+    // This method will be called when the call is initiated
+    public void onStart();
 
-public class AppsService extends Service {
-
-    public static List<String> alphabetsList;
-    private String[] alphabets = new String[]{
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    };
-
-    private final IBinder appsServiceBinder = new AppsServiceBinder();
-
-    public AppsService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return appsServiceBinder;
-    }
-
-    public void logMsg(String msg) {
-        Log.v(AppsService.class.getSimpleName(), msg);
-    }
-
-    public void loadAppsDetail(ICallback iCallback) {
-        iCallback.onStart();
-
-        alphabetsList = new ArrayList<String>();
-        alphabetsList.addAll(Arrays.asList(alphabets));
-
-        iCallback.onFinish();
-    }
-
-    public class AppsServiceBinder extends Binder {
-        AppsService getService() {
-            return AppsService.this;
-        }
-    }
+    // This method will be called after the work is done
+    public void onFinish();
 
 }

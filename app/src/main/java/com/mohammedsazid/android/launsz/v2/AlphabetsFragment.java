@@ -75,9 +75,6 @@ public class AlphabetsFragment extends Fragment {
     }
 
     private void loadGridView() {
-        alphabetsList = new ArrayList<String>();
-        alphabetsList.addAll(Arrays.asList(alphabets));
-
         // Set the layout manager and other stuffs
         alphabetsRv.setLayoutManager(new GridLayoutManager(
                 getActivity(),
@@ -86,16 +83,19 @@ public class AlphabetsFragment extends Fragment {
                 false));
         alphabetsRv.setHasFixedSize(true);
 
-        // Bind to the service
-        Intent serviceIntent = new Intent(getActivity(), AppsService.class);
-        getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
+        loadAppsList();
+    }
 
-        AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
-        alphabetsRv.setAdapter(adapter);
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unbindService(appsServiceConnection);
     }
 
     private void loadAppsList() {
-
+        // Bind to the service
+        Intent serviceIntent = new Intent(getActivity(), AppsService.class);
+        getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     // Every service needs to be bound through a ServiceConnection object
@@ -107,6 +107,20 @@ public class AlphabetsFragment extends Fragment {
             isAppsServiceBound = true;
 
             appsService.logMsg("This is a simple message sent from the fragment through the service.");
+
+            appsService.loadAppsDetail(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    alphabetsList = appsService.alphabetsList;
+
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
+                    alphabetsRv.setAdapter(adapter);
+                }
+            });
         }
 
         @Override

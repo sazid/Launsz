@@ -40,6 +40,7 @@ import android.view.ViewGroup;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
+import java.util.Map;
 
 public class AlphabetsFragment extends Fragment {
 
@@ -47,10 +48,7 @@ public class AlphabetsFragment extends Fragment {
     boolean isAppsServiceBound = false;
 
     private List<String> alphabetsList;
-    private String[] alphabets = new String[]{
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    };
+    private Map<String, Integer> alphabetsMap;
 
     RecyclerView alphabetsRv;
 
@@ -123,8 +121,9 @@ public class AlphabetsFragment extends Fragment {
                 @Override
                 public void onFinish() {
                     alphabetsList = appsService.alphabetsList;
+                    alphabetsMap = appsService.alphabetsMap;
 
-                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
                     alphabetsRv.setAdapter(adapter);
                 }
             });

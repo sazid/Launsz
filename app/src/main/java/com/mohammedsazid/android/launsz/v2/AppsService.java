@@ -36,6 +36,8 @@ import com.mohammedsazid.android.launsz.AppDetail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class AppsService extends Service {
 
@@ -43,7 +45,12 @@ public class AppsService extends Service {
     public static boolean NEEDS_REFRESH = true;
 
     public static List<String> alphabetsList;
-    private String[] alphabets = new String[]{
+    /**
+     * Key - The alphabet (A, B, C, D, ...)
+     * Value - Number of apps in that alphabet
+     */
+    public static Map<String, Integer> alphabetsMap;
+    public static String[] alphabets = new String[]{
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
@@ -77,6 +84,14 @@ public class AppsService extends Service {
 
         if (NEEDS_REFRESH) {
             apps = new ArrayList<>();
+            alphabetsMap = new TreeMap<>();
+            alphabetsList = new ArrayList<>();
+
+            alphabetsList.addAll(Arrays.asList(alphabets));
+
+            for (int i = 0; i < alphabetsList.size(); i++) {
+                alphabetsMap.put(alphabetsList.get(i), 0);
+            }
 
             Intent i = new Intent(Intent.ACTION_MAIN, null);
             i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -91,12 +106,14 @@ public class AppsService extends Service {
                 app.icon = ri.activityInfo.loadIcon(packageManager);
 
                 apps.add(app);
+
+                String initial = String.valueOf(app.label.toString().charAt(0));
+                if (alphabetsMap.containsKey(initial)) {
+                    alphabetsMap.put(initial, alphabetsMap.get(initial) + 1);
+                }
             }
 
             java.util.Collections.sort(apps);
-
-            alphabetsList = new ArrayList<String>();
-            alphabetsList.addAll(Arrays.asList(alphabets));
 
             NEEDS_REFRESH = false;
         }

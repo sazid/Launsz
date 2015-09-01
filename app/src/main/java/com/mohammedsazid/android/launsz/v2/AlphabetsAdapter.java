@@ -34,6 +34,7 @@ import android.widget.TextView;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
+import java.util.Map;
 
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
@@ -44,9 +45,11 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     FragmentActivity activity;
     List<String> alphabetsList;
+    private Map<String, Integer> alphabetsMap;
 
-    public AlphabetsAdapter(FragmentActivity activity, List<String> alphabetsList) {
+    public AlphabetsAdapter(FragmentActivity activity, Map<String, Integer> alphabetsMap, List<String> alphabetsList) {
         this.activity = activity;
+        this.alphabetsMap = alphabetsMap;
         this.alphabetsList = alphabetsList;
     }
 
@@ -94,7 +97,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // 2 icon types are added to existing list of alphabets
-        return alphabetsList.size() + 2;
+        return alphabetsMap.size() + 2;
     }
 
     @Override

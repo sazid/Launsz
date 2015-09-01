@@ -27,17 +27,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
@@ -46,12 +47,14 @@ import java.util.List;
 
 public class AppsFragment extends Fragment {
 
+    private static String filterStr;
     RecyclerView appsRv;
+    Bundle bundle;
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound;
-    Bundle bundle;
-    private static String filterStr;
+    private RelativeLayout container;
+
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -75,8 +78,26 @@ public class AppsFragment extends Fragment {
                         apps = appsService.apps;
                     }
 
-                    AppsAdapter adapter = new AppsAdapter(getActivity(), apps);
-                    appsRv.setAdapter(adapter);
+                    if (apps.size() == 0) {
+                        TextView tv = new TextView(getActivity());
+                        tv.setTextSize(36.0f);
+                        tv.setTextColor(Color.WHITE);
+
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                                RelativeLayout.LayoutParams.MATCH_PARENT,
+                                RelativeLayout.LayoutParams.MATCH_PARENT
+                        );
+
+                        tv.setLayoutParams(params);
+                        tv.setText("Oops, I sense something missing!");
+
+                        container.removeAllViews();
+                        container.addView(tv);
+                        container.requestLayout();
+                    } else {
+                        AppsAdapter adapter = new AppsAdapter(getActivity(), apps);
+                        appsRv.setAdapter(adapter);
+                    }
                 }
             });
         }
@@ -86,6 +107,9 @@ public class AppsFragment extends Fragment {
             isAppsServiceBound = false;
         }
     };
+
+    public AppsFragment() {
+    }
 
     @Override
     public void onResume() {
@@ -102,9 +126,6 @@ public class AppsFragment extends Fragment {
         }
     }
 
-    public AppsFragment() {
-    }
-
     private void bindViews(View rootView) {
         appsRv = (RecyclerView) rootView.findViewById(R.id.apps_rv);
     }
@@ -113,6 +134,7 @@ public class AppsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apps, container, false);
+        this.container = (RelativeLayout) view.findViewById(R.id.rv_container);
 
         filterStr = null;
         bundle = this.getArguments();

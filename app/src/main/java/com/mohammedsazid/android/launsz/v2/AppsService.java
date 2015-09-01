@@ -42,7 +42,7 @@ import java.util.TreeMap;
 public class AppsService extends Service {
 
     // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
-    public static boolean NEEDS_REFRESH = true;
+    private static boolean NEEDS_REFRESH = true;
 
     public static List<String> alphabetsList;
     /**
@@ -61,6 +61,11 @@ public class AppsService extends Service {
     private final IBinder appsServiceBinder = new AppsServiceBinder();
 
     public AppsService() {
+    }
+
+    public void doRefresh() {
+        NEEDS_REFRESH = true;
+        loadAppsDetails();
     }
 
     @Override

@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.AppDetail;
@@ -60,38 +61,42 @@ public class AppsAdapter extends RecyclerView.Adapter {
         viewHolder.appLabelTv.setText(app.label);
         viewHolder.appIconIv.setImageDrawable(app.icon);
 
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String packageName = app.name.toString();
-                Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
-                activity.startActivity(intent);
+        try {
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String packageName = app.name.toString();
+                    Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
+                    activity.startActivity(intent);
 
-                activity.overridePendingTransition(
-                        R.anim.slide_in_bottom, R.anim.slide_out_top
-                );
-            }
-        };
+                    activity.overridePendingTransition(
+                            R.anim.slide_in_bottom, R.anim.slide_out_top
+                    );
+                }
+            };
 
-        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                String packageName = app.name.toString();
-                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                i.addCategory(Intent.CATEGORY_DEFAULT);
-                i.setData(Uri.parse("package:" + packageName));
+            View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    String packageName = app.name.toString();
+                    Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    i.setData(Uri.parse("package:" + packageName));
 
-                activity.startActivity(i);
-                activity.overridePendingTransition(
-                        R.anim.slide_in_bottom, R.anim.slide_out_top
-                );
+                    activity.startActivity(i);
+                    activity.overridePendingTransition(
+                            R.anim.slide_in_bottom, R.anim.slide_out_top
+                    );
 
-                return true;
-            }
-        };
+                    return true;
+                }
+            };
 
-        viewHolder.itemView.setOnClickListener(onClickListener);
-        viewHolder.itemView.setOnLongClickListener(onLongClickListener);
+            viewHolder.itemView.setOnClickListener(onClickListener);
+            viewHolder.itemView.setOnLongClickListener(onLongClickListener);
+        } catch (Exception e) {
+            Toast.makeText(activity, "Oops :/", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

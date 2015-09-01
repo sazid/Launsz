@@ -24,7 +24,6 @@
 package com.mohammedsazid.android.launsz.v2;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
@@ -36,17 +35,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
-import java.util.Map;
 
 public class AppsAdapter extends RecyclerView.Adapter {
 
-    private List<AppDetail> apps;
     FragmentActivity activity;
+    private List<AppDetail> apps;
 
     public AppsAdapter(FragmentActivity activity, List<AppDetail> apps) {
         this.apps = apps;
@@ -65,28 +62,40 @@ public class AppsAdapter extends RecyclerView.Adapter {
             View.OnClickListener onClickListener = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String packageName = app.name.toString();
-                    Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
-                    activity.startActivity(intent);
+                    try {
+                        String packageName = app.name.toString();
+                        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
+                        if (activity != null) {
+                            activity.startActivity(intent);
 
-                    activity.overridePendingTransition(
-                            R.anim.slide_in_bottom, R.anim.slide_out_top
-                    );
+                            activity.overridePendingTransition(
+                                    R.anim.slide_in_bottom, R.anim.slide_out_top
+                            );
+                        }
+                    } catch (Exception e) {
+                        activity.getSupportFragmentManager().popBackStack();
+                        Toast.makeText(activity, "Oops, my mistake :/", Toast.LENGTH_SHORT).show();
+                    }
                 }
             };
 
             View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    String packageName = app.name.toString();
-                    Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    i.addCategory(Intent.CATEGORY_DEFAULT);
-                    i.setData(Uri.parse("package:" + packageName));
+                    try {
+                        String packageName = app.name.toString();
+                        Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        i.addCategory(Intent.CATEGORY_DEFAULT);
+                        i.setData(Uri.parse("package:" + packageName));
 
-                    activity.startActivity(i);
-                    activity.overridePendingTransition(
-                            R.anim.slide_in_bottom, R.anim.slide_out_top
-                    );
+                        activity.startActivity(i);
+                        activity.overridePendingTransition(
+                                R.anim.slide_in_bottom, R.anim.slide_out_top
+                        );
+                    } catch (Exception e) {
+                        activity.getSupportFragmentManager().popBackStack();
+                        Toast.makeText(activity, "Oops, my mistake :/", Toast.LENGTH_SHORT).show();
+                    }
 
                     return true;
                 }

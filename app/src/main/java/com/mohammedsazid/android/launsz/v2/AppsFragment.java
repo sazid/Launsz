@@ -90,12 +90,15 @@ public class AppsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(AppsFragment.class.getSimpleName(), "onResume()");
 
         if (appsRv != null && appsService != null) {
             appsService.loadAppsDetails();
             apps = appsService.filterApps(filterStr);
             appsRv.setAdapter(new AppsAdapter(getActivity(), apps));
+        }
+
+        if (apps != null && apps.size() == 0) {
+            getActivity().getSupportFragmentManager().popBackStack();
         }
     }
 

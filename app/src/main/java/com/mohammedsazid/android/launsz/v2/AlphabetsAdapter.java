@@ -36,7 +36,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.R;
-import com.mohammedsazid.android.launsz.SettingsActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ import java.util.Map;
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     private static final int ALPHABET_TYPE = 0;
-//    private static final int HISTORY_TYPE = 1;
+    //    private static final int HISTORY_TYPE = 1;
     private static final int ALL_TYPE = 2;
     private static final int MENU_TYPE = 3;
 
@@ -82,6 +81,10 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                         @Override
                         public void onClick(View v) {
                             activity.getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(
+                                            R.anim.slide_in_bottom, R.anim.slide_out_top,
+                                            R.anim.slide_in_top, R.anim.slide_out_bottom
+                                    )
                                     .addToBackStack("apps_fragment")
                                     .add(R.id.alphabets_fragment_container, new AppsFragment())
                                     .commit();
@@ -146,6 +149,10 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     @Override
                     public void onClick(View v) {
                         activity.getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
+                                        R.anim.slide_in_top, R.anim.slide_out_bottom
+                                )
                                 .addToBackStack("apps_fragment")
                                 .add(R.id.alphabets_fragment_container, new AppsFragment())
                                 .commit();

@@ -47,6 +47,10 @@ public class MainActivity extends FragmentActivity {
         bindViews();
 
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in_bottom, R.anim.slide_out_top,
+                        R.anim.slide_in_top, R.anim.slide_out_bottom
+                )
                 .replace(R.id.alphabets_fragment_container, new AlphabetsFragment())
                 .commit();
 

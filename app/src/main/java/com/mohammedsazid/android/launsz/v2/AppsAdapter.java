@@ -72,33 +72,12 @@ public class AppsAdapter extends RecyclerView.Adapter {
         View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                String packageName = app.name.toString();
+                Intent i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                i.addCategory(Intent.CATEGORY_DEFAULT);
+                i.setData(Uri.parse("package:" + packageName));
 
-                new MaterialDialog.Builder(activity)
-                        .title("App Detail")
-                        .items(new String[] {"App Info", "Uninstall"})
-                        .itemsCallback(new MaterialDialog.ListCallback() {
-                            @Override
-                            public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
-                                String packageName = app.name.toString();
-                                Intent i;
-                                switch (position) {
-                                    case 0:
-                                        i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        i.setData(Uri.parse("package:" + packageName));
-                                        i.addCategory(Intent.CATEGORY_DEFAULT);
-
-                                        activity.startActivity(i);
-                                        break;
-                                    case 1:
-                                        i = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-                                        i.setData(Uri.parse("package:" + packageName));
-                                        activity.startActivity(i);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        });
+                activity.startActivity(i);
 
                 return true;
             }

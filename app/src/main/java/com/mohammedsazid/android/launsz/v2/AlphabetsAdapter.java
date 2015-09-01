@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mohammedsazid.android.launsz.R;
 
@@ -61,7 +62,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
                 // because first and the last items are icons
-                int posForAlphabets = position - 1;
+                final int posForAlphabets = position - 1;
                 viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
 
                 // If there's no app starting with a given alphabet, disable that alphabet
@@ -72,6 +73,17 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     // Change the color based on user preference
                     viewHolder.alphabetTv.setTextColor(Color.DKGRAY);
                 }
+
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.alphabets_fragment_container, new AppsFragment())
+                                .commit();
+
+                        Toast.makeText(activity, alphabetsList.get(posForAlphabets), Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
             case MENU_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);

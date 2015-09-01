@@ -41,7 +41,6 @@ import com.mohammedsazid.android.launsz.R;
 public class MainActivity extends FragmentActivity {
 
     FrameLayout alphabetsFragmentContainer;
-    PackageModificationReceiver modificationReceiver;
 
     ImageView previousTrackIv;
     ImageView playPauseIv;
@@ -60,18 +59,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         bindViews();
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
-        filter.addAction(Intent.ACTION_PACKAGE_DATA_CLEARED);
-        filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        filter.addAction(Intent.ACTION_PACKAGE_REPLACED);
-        filter.addAction(Intent.ACTION_PACKAGE_RESTARTED);
-        filter.addDataScheme("package");
-
-        modificationReceiver = new PackageModificationReceiver();
-        registerReceiver(modificationReceiver, filter);
 
         getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(

@@ -29,12 +29,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 public class PackageModificationReceiver extends BroadcastReceiver {
-
-    private AppsService appsService;
-
-    private boolean isAppsServiceBound = false;
 
     public PackageModificationReceiver() {
     }
@@ -45,23 +42,8 @@ public class PackageModificationReceiver extends BroadcastReceiver {
 
         // Start the service if it's not already running
         context.startService(serviceIntent);
-        context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+        Log.d(PackageModificationReceiver.class.getSimpleName(), "onReceiver(): Package modified");
     }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            AppsService.AppsServiceBinder binder = (AppsService.AppsServiceBinder) service;
-            appsService = binder.getService();
-            isAppsServiceBound = true;
-
-            appsService.doRefresh();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isAppsServiceBound = false;
-        }
-    };
 
 }

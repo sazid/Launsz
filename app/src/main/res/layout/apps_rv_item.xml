@@ -22,8 +22,8 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="64dp"
-    android:layout_height="64dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="?android:selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
@@ -42,7 +42,7 @@
 
     <TextView
         android:id="@+id/apps_rv_item_label"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:ellipsize="end"
@@ -50,12 +50,13 @@
         android:lineSpacingMultiplier="0.9"
         android:maxLines="2"
         android:minLines="2"
-        android:shadowColor="#7F000000"
+        android:shadowColor="#7FFFFFFF"
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="1"
         android:singleLine="false"
         android:text="App"
+        android:textColor="@color/white"
         android:textSize="12sp" />
 
 </LinearLayout>

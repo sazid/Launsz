@@ -58,6 +58,7 @@
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="musicControlCallbacks"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_previous_track" />
 
@@ -68,6 +69,7 @@
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="musicControlCallbacks"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_playpause_white" />
 
@@ -78,6 +80,7 @@
                 android:background="?android:selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
+                android:onClick="musicControlCallbacks"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_next_track" />
 

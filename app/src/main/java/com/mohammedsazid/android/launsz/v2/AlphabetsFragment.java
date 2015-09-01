@@ -27,12 +27,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +71,36 @@ public class AlphabetsFragment extends Fragment {
         bindViews(view);
         loadGridView();
 
+        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0 && appsService != null) {
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+                    if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
+                        appsService.getAppsDetails(new ICallback() {
+                            @Override
+                            public void onStart() {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                alphabetsList = appsService.alphabetsList;
+                                alphabetsMap = appsService.alphabetsMap;
+
+                                AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+                                alphabetsRv.setAdapter(adapter);
+                            }
+                        });
+
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putBoolean(AppsService.FORCE_REFRESH, false);
+                        editor.commit();
+                    }
+                }
+            }
+        });
+
         return view;
     }
 
@@ -83,15 +117,36 @@ public class AlphabetsFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-//        getActivity().unbindService(appsServiceConnection);
+    public void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
+            appsService.getAppsDetails(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    alphabetsList = appsService.alphabetsList;
+                    alphabetsMap = appsService.alphabetsMap;
+
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+                    alphabetsRv.setAdapter(adapter);
+                }
+            });
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putBoolean(AppsService.FORCE_REFRESH, false);
+            editor.commit();
+        }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        loadAppsList();
+    public void onStop() {
+        super.onStop();
+//        getActivity().unbindService(appsServiceConnection);
     }
 
     private void loadAppsList() {

@@ -25,10 +25,12 @@ package com.mohammedsazid.android.launsz.v2;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.mohammedsazid.android.launsz.AppDetail;
@@ -71,13 +73,6 @@ public class AppsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getExtras() != null) {
-            boolean forceRefresh = intent.getExtras().getBoolean(FORCE_REFRESH, false);
-            if (forceRefresh) {
-                NEEDS_REFRESH = true;
-            }
-        }
-
         loadAppsDetails();
 
         return START_STICKY;
@@ -89,6 +84,12 @@ public class AppsService extends Service {
     }
 
     public void loadAppsDetails() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getBoolean(FORCE_REFRESH, false)) {
+            NEEDS_REFRESH = true;
+            Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
+        }
+
         packageManager = getPackageManager();
 
         if (NEEDS_REFRESH) {

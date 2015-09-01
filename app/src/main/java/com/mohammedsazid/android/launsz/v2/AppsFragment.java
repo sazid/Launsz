@@ -33,9 +33,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
@@ -84,6 +86,18 @@ public class AppsFragment extends Fragment {
             isAppsServiceBound = false;
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(AppsFragment.class.getSimpleName(), "onResume()");
+
+        if (appsRv != null && appsService != null) {
+            appsService.loadAppsDetails();
+            apps = appsService.filterApps(filterStr);
+            appsRv.setAdapter(new AppsAdapter(getActivity(), apps));
+        }
+    }
 
     public AppsFragment() {
     }

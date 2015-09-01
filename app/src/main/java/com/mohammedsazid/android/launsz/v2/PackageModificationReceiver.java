@@ -28,7 +28,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class PackageModificationReceiver extends BroadcastReceiver {
@@ -38,12 +40,15 @@ public class PackageModificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent serviceIntent = new Intent(context, AppsService.class);
-        serviceIntent.putExtra(AppsService.FORCE_REFRESH, true);
-        // Start the service if it's not already running
-        context.startService(serviceIntent);
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+        editor.putBoolean(AppsService.FORCE_REFRESH, true);
+        editor.commit();
 
-        Log.d(PackageModificationReceiver.class.getSimpleName(), "onReceiver(): Package modified");
+//        Intent serviceIntent = new Intent(context, AppsService.class);
+//        // Start the service if it's not already running
+//        context.startService(serviceIntent);
+
+        Log.d(PackageModificationReceiver.class.getSimpleName(), "onReceive(): Package modified");
     }
 
 }

@@ -64,26 +64,28 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                 // because first and the last items are icons
                 final int posForAlphabets = position - 1;
                 viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
+                final boolean isDisabled = alphabetsMap.get(alphabetsList.get(posForAlphabets)) <= 0;
 
                 // If there's no app starting with a given alphabet, disable that alphabet
-                if (alphabetsMap.get(alphabetsList.get(posForAlphabets)) <= 0) {
+                if (isDisabled) {
                     viewHolder.itemView.setClickable(false);
                     viewHolder.itemView.setFocusable(false);
 
                     // Change the color based on user preference
                     viewHolder.alphabetTv.setTextColor(Color.DKGRAY);
+                } else {
+                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.getSupportFragmentManager().beginTransaction()
+                                    .addToBackStack("apps_fragment")
+                                    .add(R.id.alphabets_fragment_container, new AppsFragment())
+                                    .commit();
+
+                            Toast.makeText(activity, alphabetsList.get(posForAlphabets), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.alphabets_fragment_container, new AppsFragment())
-                                .commit();
-
-                        Toast.makeText(activity, alphabetsList.get(posForAlphabets), Toast.LENGTH_SHORT).show();
-                    }
-                });
                 break;
             case MENU_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);

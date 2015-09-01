@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,8 +62,16 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
             case ALPHABET_TYPE:
                 // because first and the last items are icons
                 int posForAlphabets = position - 1;
-
                 viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
+
+                // If there's no app starting with a given alphabet, disable that alphabet
+                if (alphabetsMap.get(alphabetsList.get(posForAlphabets)) <= 0) {
+                    viewHolder.itemView.setClickable(false);
+                    viewHolder.itemView.setFocusable(false);
+
+                    // Change the color based on user preference
+                    viewHolder.alphabetTv.setTextColor(Color.DKGRAY);
+                }
                 break;
             case MENU_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);

@@ -73,7 +73,7 @@ public class AppsFragment extends Fragment {
                         apps = appsService.apps;
                     }
 
-                    AppsAdapter adapter = new AppsAdapter(apps);
+                    AppsAdapter adapter = new AppsAdapter(getActivity(), apps);
                     appsRv.setAdapter(adapter);
                 }
             });

@@ -23,7 +23,10 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
 
@@ -41,18 +45,67 @@ import java.util.Map;
 public class AppsAdapter extends RecyclerView.Adapter {
 
     private List<AppDetail> apps;
+    FragmentActivity activity;
 
-    public AppsAdapter(List<AppDetail> apps) {
+    public AppsAdapter(FragmentActivity activity, List<AppDetail> apps) {
         this.apps = apps;
+        this.activity = activity;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
-        AppDetail app = apps.get(position);
+        final AppDetail app = apps.get(position);
 
         viewHolder.appLabelTv.setText(app.label);
         viewHolder.appIconIv.setImageDrawable(app.icon);
+
+        View.OnClickListener onClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String packageName = app.name.toString();
+                Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
+                activity.startActivity(intent);
+            }
+        };
+
+        View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                new MaterialDialog.Builder(activity)
+                        .title("App Detail")
+                        .items(new String[] {"App Info", "Uninstall"})
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+                                String packageName = app.name.toString();
+                                Intent i;
+                                switch (position) {
+                                    case 0:
+                                        i = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                        i.setData(Uri.parse("package:" + packageName));
+                                        i.addCategory(Intent.CATEGORY_DEFAULT);
+
+                                        activity.startActivity(i);
+                                        break;
+                                    case 1:
+                                        i = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+                                        i.setData(Uri.parse("package:" + packageName));
+                                        activity.startActivity(i);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
+
+                return true;
+            }
+        };
+
+        viewHolder.itemView.setOnClickListener(onClickListener);
+        viewHolder.itemView.setOnLongClickListener(onLongClickListener);
     }
 
     @Override

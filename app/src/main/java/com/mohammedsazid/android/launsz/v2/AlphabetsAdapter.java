@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
@@ -33,7 +34,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.R;
+import com.mohammedsazid.android.launsz.SettingsActivity;
 
 import java.util.List;
 import java.util.Map;
@@ -58,6 +61,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
+        View.OnClickListener onClickListener;
 
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
@@ -74,7 +78,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     // Change the color based on user preference
                     viewHolder.alphabetTv.setTextColor(Color.DKGRAY);
                 } else {
-                    viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    onClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             activity.getSupportFragmentManager().beginTransaction()
@@ -84,17 +88,75 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
                             Toast.makeText(activity, alphabetsList.get(posForAlphabets), Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    };
+
+                    viewHolder.itemView.setOnClickListener(onClickListener);
                 }
                 break;
             case MENU_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
+
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new MaterialDialog.Builder(activity)
+                                .title("Menu")
+                                .items(R.array.menu_items)
+                                .itemsCallback(new MaterialDialog.ListCallback() {
+                                    @Override
+                                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+//                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
+
+                                        Intent i;
+
+                                        switch (position) {
+                                            case 0:
+//                                        i = new Intent(activity, SettingsActivity.class);
+//                                        activity.startActivity(i);
+                                                Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
+                                                break;
+                                            case 1:
+                                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                                activity.startActivity(Intent.createChooser(i, "Select Wallpaper"));
+                                                break;
+                                            case 2:
+                                                new MaterialDialog.Builder(activity)
+                                                        .title("About")
+                                                        .content(R.string.about_summary)
+                                                        .show();
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                })
+                                .show();
+                    }
+                };
+
+                viewHolder.itemView.setOnClickListener(onClickListener);
+                viewHolder.iconIv.setOnClickListener(onClickListener);
                 break;
 //            case HISTORY_TYPE:
 //                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
 //                break;
             case ALL_TYPE:
                 viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.getSupportFragmentManager().beginTransaction()
+                                .addToBackStack("apps_fragment")
+                                .add(R.id.alphabets_fragment_container, new AppsFragment())
+                                .commit();
+
+                        Toast.makeText(activity, "All apps", Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+                viewHolder.itemView.setOnClickListener(onClickListener);
+                viewHolder.iconIv.setOnClickListener(onClickListener);
+
                 break;
         }
     }

@@ -55,4 +55,13 @@ public class MainActivity extends FragmentActivity {
         startService(appsServiceIntent);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 }

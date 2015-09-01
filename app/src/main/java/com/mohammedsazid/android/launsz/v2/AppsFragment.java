@@ -97,7 +97,9 @@ public class AppsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apps, container, false);
 
+        filterStr = null;
         bundle = this.getArguments();
+
         if (bundle != null) {
             filterStr = bundle.getString(AlphabetsAdapter.ALPHABET_CHARACTER, null);
         }

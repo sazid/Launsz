@@ -111,8 +111,6 @@ public class AlphabetsFragment extends Fragment {
             appsService = binder.getService();
             isAppsServiceBound = true;
 
-            appsService.logMsg("This is a simple message sent from the fragment through the service.");
-
             appsService.getAppsDetails(new ICallback() {
                 @Override
                 public void onStart() {

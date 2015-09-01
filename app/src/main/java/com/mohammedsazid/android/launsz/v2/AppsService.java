@@ -80,10 +80,6 @@ public class AppsService extends Service {
         return appsServiceBinder;
     }
 
-    public void logMsg(String msg) {
-        Log.v(AppsService.class.getSimpleName(), msg);
-    }
-
     public void loadAppsDetails() {
         packageManager = getPackageManager();
 

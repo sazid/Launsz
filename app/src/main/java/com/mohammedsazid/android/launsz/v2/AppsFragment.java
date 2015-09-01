@@ -48,6 +48,8 @@ public class AppsFragment extends Fragment {
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound;
+    Bundle bundle;
+    private static String filterStr;
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -64,7 +66,12 @@ public class AppsFragment extends Fragment {
                 public void onFinish() {
                     // Once the service has finished loading the apps (if not already),
                     // get the list and create the adapter.
-                    apps = appsService.apps;
+
+                    if (filterStr != null && !filterStr.isEmpty()) {
+                        apps = appsService.filterApps(filterStr);
+                    } else {
+                        apps = appsService.apps;
+                    }
 
                     AppsAdapter adapter = new AppsAdapter(apps);
                     appsRv.setAdapter(adapter);
@@ -89,6 +96,11 @@ public class AppsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apps, container, false);
+
+        bundle = this.getArguments();
+        if (bundle != null) {
+            filterStr = bundle.getString(AlphabetsAdapter.ALPHABET_CHARACTER, null);
+        }
 
         bindViews(view);
         loadApps();

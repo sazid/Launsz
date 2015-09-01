@@ -25,6 +25,8 @@ package com.mohammedsazid.android.launsz.v2;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,6 +48,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     //    private static final int HISTORY_TYPE = 1;
     private static final int ALL_TYPE = 2;
     private static final int MENU_TYPE = 3;
+    public static final String ALPHABET_CHARACTER = "alphabet_character";
 
     FragmentActivity activity;
     List<String> alphabetsList;
@@ -66,8 +69,9 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
             case ALPHABET_TYPE:
                 // because first and the last items are icons
                 final int posForAlphabets = position - 1;
-                viewHolder.alphabetTv.setText(alphabetsList.get(posForAlphabets));
-                final boolean isDisabled = alphabetsMap.get(alphabetsList.get(posForAlphabets)) <= 0;
+                final String alphabet = alphabetsList.get(posForAlphabets);
+                viewHolder.alphabetTv.setText(alphabet);
+                final boolean isDisabled = alphabetsMap.get(alphabet) <= 0;
 
                 // If there's no app starting with a given alphabet, disable that alphabet
                 if (isDisabled) {
@@ -80,16 +84,21 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     onClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(ALPHABET_CHARACTER, alphabet);
+                            Fragment fragment = new AppsFragment();
+                            fragment.setArguments(bundle);
+
                             activity.getSupportFragmentManager().beginTransaction()
                                     .setCustomAnimations(
                                             R.anim.slide_in_bottom, R.anim.slide_out_top,
                                             R.anim.slide_in_top, R.anim.slide_out_bottom
                                     )
                                     .addToBackStack("apps_fragment")
-                                    .add(R.id.alphabets_fragment_container, new AppsFragment())
+                                    .add(R.id.alphabets_fragment_container, fragment)
                                     .commit();
 
-                            Toast.makeText(activity, alphabetsList.get(posForAlphabets), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, alphabet, Toast.LENGTH_SHORT).show();
                         }
                     };
 

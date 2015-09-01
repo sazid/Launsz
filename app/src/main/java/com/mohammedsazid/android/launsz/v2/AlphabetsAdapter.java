@@ -97,8 +97,6 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                                     .addToBackStack("apps_fragment")
                                     .add(R.id.alphabets_fragment_container, fragment)
                                     .commit();
-
-                            Toast.makeText(activity, alphabet, Toast.LENGTH_SHORT).show();
                         }
                     };
 
@@ -117,8 +115,6 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                                 .itemsCallback(new MaterialDialog.ListCallback() {
                                     @Override
                                     public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
-//                                    Toast.makeText(mContext, String.valueOf(i) + ": " + charSequence, Toast.LENGTH_SHORT).show();
-
                                         Intent i;
 
                                         switch (position) {
@@ -165,8 +161,6 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                                 .addToBackStack("apps_fragment")
                                 .add(R.id.alphabets_fragment_container, new AppsFragment())
                                 .commit();
-
-                        Toast.makeText(activity, "All apps", Toast.LENGTH_SHORT).show();
                     }
                 };
 

@@ -33,8 +33,8 @@
         <!--<item name="android:activityOpenExitAnimation">@android:anim/slide_out_right</item>-->
         <!--<item name="android:activityCloseEnterAnimation">@android:anim/slide_in_left</item>-->
         <!--<item name="android:activityCloseExitAnimation">@android:anim/slide_out_right</item>-->
-        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
-        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_top</item>
     </style>
 
     <!-- Base application theme. -->
@@ -48,7 +48,7 @@
 
     <style name="AppTheme" parent="Theme.AppCompat">
         <!-- Customize your theme here. -->
-        <!--<item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>-->
+        <item name="android:windowAnimationStyle">@style/Animation.ActivityAnimation</item>
         <item name="colorAccent">@color/black</item>
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/black</item>

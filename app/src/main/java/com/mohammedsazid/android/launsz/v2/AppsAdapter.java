@@ -66,6 +66,10 @@ public class AppsAdapter extends RecyclerView.Adapter {
                 String packageName = app.name.toString();
                 Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
                 activity.startActivity(intent);
+
+                activity.overridePendingTransition(
+                        R.anim.slide_in_bottom, R.anim.slide_out_top
+                );
             }
         };
 
@@ -78,6 +82,9 @@ public class AppsAdapter extends RecyclerView.Adapter {
                 i.setData(Uri.parse("package:" + packageName));
 
                 activity.startActivity(i);
+                activity.overridePendingTransition(
+                        R.anim.slide_in_bottom, R.anim.slide_out_top
+                );
 
                 return true;
             }

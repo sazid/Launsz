@@ -41,6 +41,7 @@ import java.util.TreeMap;
 
 public class AppsService extends Service {
 
+    public static final String FORCE_REFRESH = "force_refresh";
     // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
     private static boolean NEEDS_REFRESH = true;
 
@@ -63,13 +64,20 @@ public class AppsService extends Service {
     public AppsService() {
     }
 
-    public void doRefresh() {
-        NEEDS_REFRESH = true;
-        loadAppsDetails();
-    }
+//    public void doRefresh() {
+//        NEEDS_REFRESH = true;
+//        loadAppsDetails();
+//    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getExtras() != null) {
+            boolean forceRefresh = intent.getExtras().getBoolean(FORCE_REFRESH, false);
+            if (forceRefresh) {
+                NEEDS_REFRESH = true;
+            }
+        }
+
         loadAppsDetails();
 
         return START_STICKY;

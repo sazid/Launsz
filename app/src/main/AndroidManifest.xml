@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mohammedsazid.android.launsz" >
+    package="com.mohammedsazid.android.launsz">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppThemeDark" >
+        android:theme="@style/AppThemeDark">
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:launchMode="singleTask"
-            android:theme="@style/AppThemeDark" >
-        </activity>
+            android:theme="@style/AppThemeDark"></activity>
         <activity
             android:name=".v2.MainActivity"
             android:label="@string/title_activity_home"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +29,7 @@
             android:name=".AppsListActivity"
             android:label="@string/title_activity_apps_list"
             android:parentActivityName=".HomeActivity"
-            android:theme="@style/AppThemeDark" >
+            android:theme="@style/AppThemeDark">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mohammedsazid.android.launsz.HomeActivity" />
@@ -38,7 +37,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".HomeActivity" >
+            android:parentActivityName=".HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mohammedsazid.android.launsz.HomeActivity" />
@@ -47,22 +46,20 @@
         <service
             android:name=".v2.AppsService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
 
         <receiver
             android:name=".v2.PackageModificationReceiver"
             android:enabled="true"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <data android:scheme="package" />
+
                 <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <action android:name="android.intent.action.PACKAGE_CHANGED" />
                 <action android:name="android.intent.action.PACKAGE_DATA_CLEARED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
                 <action android:name="android.intent.action.PACKAGE_REPLACED" />
-                <action android:name="android.intent.action.PACKAGE_RESTARTED" />
-                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED" />
             </intent-filter>
         </receiver>
     </application>

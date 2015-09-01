@@ -39,7 +39,7 @@ public class PackageModificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent serviceIntent = new Intent(context, AppsService.class);
-
+        serviceIntent.putExtra(AppsService.FORCE_REFRESH, true);
         // Start the service if it's not already running
         context.startService(serviceIntent);
 

@@ -42,6 +42,9 @@ public class AppsInfoProvider extends ContentProvider {
     private static final int APPSINFO_APPS = 1;
     private static final int APPSINFO_APP = 2;
     private static final UriMatcher uriMatcher;
+    // Constants for getType
+    public static final String TYPE_ITEM = "vnd.android.cursor.item/" + CONTENT_URI.toString();
+    public static final String TYPE_DIR = "vnd.android.cursor.dir/" + CONTENT_URI.toString();
 
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
@@ -89,9 +92,9 @@ public class AppsInfoProvider extends ContentProvider {
     public String getType(Uri uri) {
         switch (uriMatcher.match(uri)) {
             case APPSINFO_APP:
-                return "vnd.android.cursor.item/" + CONTENT_URI.toString();
+                return TYPE_ITEM;
             case APPSINFO_APPS:
-                return "vnd.android.cursor.dir/" + CONTENT_URI.toString();
+                return TYPE_DIR;
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }

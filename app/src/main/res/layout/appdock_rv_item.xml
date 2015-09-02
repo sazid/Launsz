@@ -23,12 +23,21 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="?android:selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="8dp">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/alphabets_rv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="horizontal"/>
+    <ImageView
+        android:id="@+id/apps_rv_item_icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:maxHeight="64dp"
+        android:maxWidth="64dp"
+        android:scaleType="fitXY"
+        android:src="@mipmap/ic_launcher"/>
 
 </RelativeLayout>

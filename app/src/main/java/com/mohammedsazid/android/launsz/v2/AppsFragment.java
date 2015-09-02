@@ -95,7 +95,7 @@ public class AppsFragment extends Fragment {
                         container.addView(tv);
                         container.requestLayout();
                     } else {
-                        AppsAdapter adapter = new AppsAdapter(getActivity(), apps);
+                        AppsAdapter adapter = new AppsAdapter(getActivity(), apps, false);
                         appsRv.setAdapter(adapter);
                     }
                 }
@@ -118,7 +118,7 @@ public class AppsFragment extends Fragment {
         if (appsRv != null && appsService != null) {
             appsService.loadAppsDetails();
             apps = appsService.filterApps(filterStr);
-            appsRv.setAdapter(new AppsAdapter(getActivity(), apps));
+            appsRv.setAdapter(new AppsAdapter(getActivity(), apps, false));
         }
 
         if (apps != null && apps.size() == 0) {

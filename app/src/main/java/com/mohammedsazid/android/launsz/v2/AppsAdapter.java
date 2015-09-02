@@ -44,10 +44,12 @@ public class AppsAdapter extends RecyclerView.Adapter {
 
     FragmentActivity activity;
     private List<AppDetail> apps;
+    boolean appDock = false;
 
-    public AppsAdapter(FragmentActivity activity, List<AppDetail> apps) {
+    public AppsAdapter(FragmentActivity activity, List<AppDetail> apps, boolean appDock) {
         this.apps = apps;
         this.activity = activity;
+        this.appDock = appDock;
     }
 
     @Override
@@ -55,8 +57,10 @@ public class AppsAdapter extends RecyclerView.Adapter {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
         final AppDetail app = apps.get(position);
 
-        viewHolder.appLabelTv.setText(app.label);
         viewHolder.appIconIv.setImageDrawable(app.icon);
+        if (!appDock) {
+            viewHolder.appLabelTv.setText(app.label);
+        }
 
         try {
             View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -112,11 +116,11 @@ public class AppsAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_rv_item, parent, false);
+        int layoutResource = appDock ? R.layout.appdock_rv_item : R.layout.apps_rv_item;
 
-        AlphabetsViewHolder viewHolder = new AlphabetsViewHolder(view, viewType);
+        view = LayoutInflater.from(parent.getContext()).inflate(layoutResource, parent, false);
 
-        return viewHolder;
+        return new AlphabetsViewHolder(view, viewType);
     }
 
     @Override

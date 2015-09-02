@@ -87,9 +87,14 @@ public class AppsInfoProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        // Implement this to handle requests for the MIME type of the data
-        // at the given URI.
-        throw new UnsupportedOperationException("Unsupported operation.");
+        switch (uriMatcher.match(uri)) {
+            case APPSINFO_APP:
+                return "vnd.android.cursor.item/" + CONTENT_URI.toString();
+            case APPSINFO_APPS:
+                return "vnd.android.cursor.dir/" + CONTENT_URI.toString();
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri.toString());
+        }
     }
 
     @Override

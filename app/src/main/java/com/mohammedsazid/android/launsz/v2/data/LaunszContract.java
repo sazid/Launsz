@@ -56,7 +56,7 @@ public class LaunszContract {
                     + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                     + COLUMN_APP_PACKAGE_NAME + " TEXT NOT NULL, "
                     + COLUMN_APP_LABEL + " TEXT NOT NULL, "
-                    + COLUMN_LAUNCH_COUNT + " INTEGER NOT NULL"
+                    + COLUMN_LAUNCH_COUNT + " INTEGER NOT NULL DEFAULT (0)"
                     + ")" +
                     ";";
 

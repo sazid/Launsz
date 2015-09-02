@@ -132,7 +132,35 @@ public class AppsInfoProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = appsInfoOpenHelper.getWritableDatabase();
+
+        // Return -1 if update was unsuccessful
+        int updateCount = -1;
+
+        switch (uriMatcher.match(uri)) {
+            case APPSINFO_APPS:
+                updateCount = db.update(
+                        LaunszContract.AppsInfo.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs
+                );
+
+                break;
+            case APPSINFO_APP:
+                String id = uri.getLastPathSegment();
+
+                updateCount = db.update(
+                        LaunszContract.AppsInfo.TABLE_NAME,
+                        values,
+                        LaunszContract.AppsInfo._ID + " = ?",
+                        new String[]{id}
+                );
+
+                break;
+        }
+
+        getContext().getContentResolver().notifyChange(uri, null);
+        return updateCount;
     }
 }

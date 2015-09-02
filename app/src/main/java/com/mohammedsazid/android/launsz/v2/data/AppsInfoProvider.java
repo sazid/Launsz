@@ -56,8 +56,33 @@ public class AppsInfoProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        // Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = appsInfoOpenHelper.getWritableDatabase();
+
+        // If deletion is unsuccessful return -1
+        int deleteCount = -1;
+
+        switch (uriMatcher.match(uri)) {
+            case APPSINFO_APPS:
+                deleteCount = db.delete(
+                        LaunszContract.AppsInfo.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            case APPSINFO_APP:
+                String id = uri.getLastPathSegment();
+
+                deleteCount = db.delete(
+                        LaunszContract.AppsInfo.TABLE_NAME,
+                        LaunszContract.AppsInfo._ID + " = ?",
+                        new String[]{id}
+                );
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri.toString());
+        }
+
+        return deleteCount;
     }
 
     @Override
@@ -135,6 +160,8 @@ public class AppsInfoProvider extends ContentProvider {
                 );
 
                 break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
 
         if (cursor == null) {
@@ -173,6 +200,8 @@ public class AppsInfoProvider extends ContentProvider {
                 );
 
                 break;
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri.toString());
         }
 
         getContext().getContentResolver().notifyChange(uri, null);

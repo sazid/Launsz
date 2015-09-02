@@ -214,6 +214,7 @@ public class AppsInfoProvider extends ContentProvider {
 
         switch (uriMatcher.match(uri)) {
             case APPSINFO_APPS:
+                // TODO: Add a limit here based on user preference
                 cursor = db.query(
                         LaunszContract.AppsInfo.TABLE_NAME,
                         projection,
@@ -221,13 +222,13 @@ public class AppsInfoProvider extends ContentProvider {
                         selectionArgs,
                         null,
                         null,
-                        sortOrder
+                        sortOrder,
+                        "10"
                 );
                 break;
             case APPSINFO_APP:
                 String id = uri.getLastPathSegment();
 
-                // TODO: Add a limit here based on user preference
                 cursor = db.query(
                         LaunszContract.AppsInfo.TABLE_NAME,
                         projection,
@@ -235,8 +236,7 @@ public class AppsInfoProvider extends ContentProvider {
                         new String[]{id},
                         null,
                         null,
-                        sortOrder,
-                        "10"
+                        sortOrder
                 );
 
                 break;

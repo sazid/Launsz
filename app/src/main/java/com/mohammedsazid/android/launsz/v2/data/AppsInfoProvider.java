@@ -24,6 +24,7 @@
 package com.mohammedsazid.android.launsz.v2.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -68,8 +69,22 @@ public class AppsInfoProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO: Implement this to handle requests to insert a new row.
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = appsInfoOpenHelper.getWritableDatabase();
+
+        long rowId = db.insert(LaunszContract.AppsInfo.TABLE_NAME, null, values);
+
+        // If data insertion is successful
+        if (rowId > 0) {
+            Uri _uri = ContentUris.withAppendedId(
+                    Uri.parse(CONTENT_URI.toString() + "/apps/app"),
+                    rowId
+            );
+
+            getContext().getContentResolver().notifyChange(_uri, null);
+            return _uri;
+        }
+
+        return null;
     }
 
     @Override

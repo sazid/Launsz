@@ -139,7 +139,7 @@ public class AppsInfoProvider extends ContentProvider {
         Cursor cursor = null;
 
         // Set the sorting to be based on launch count (by default)
-        if (sortOrder != null || sortOrder.isEmpty()) {
+        if (sortOrder != null) {
             sortOrder = LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT + " DESC";
         }
 

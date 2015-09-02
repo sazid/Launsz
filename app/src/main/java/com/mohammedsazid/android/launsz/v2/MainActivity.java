@@ -27,14 +27,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -42,9 +45,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
+import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
+import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,18 +113,48 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void filterAndShowMostUsedApps() {
-        // TODO: Read most used apps from the database with count
-        List<String> mostUsedAppsPackageName = new ArrayList<>();
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.launsz");
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.listr");
-        mostUsedAppsPackageName.add("com.mohammedsazid.unlockify");
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.done");
-
         List<AppDetail> mostUsedApps = new ArrayList<>();
+        List<AppDetail> appsFromDb = new ArrayList<>();
 
-        for (AppDetail app : apps) {
-            if (mostUsedAppsPackageName.contains(app.name)) {
-                mostUsedApps.add(app);
+        Cursor cursor = getContentResolver().query(
+                Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
+                new String[]{
+                        LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
+                        LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
+                },
+                null,
+                null,
+                null
+        );
+
+        cursor.moveToFirst();
+        do {
+            if (cursor != null && cursor.getCount() != 0) {
+                AppDetail _app = new AppDetail();
+
+                _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
+                _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
+                appsFromDb.add(_app);
+            } else {
+                if (cursor == null) {
+                    Toast.makeText(this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
+                    Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
+                }
+            }
+
+            cursor.moveToNext();
+        } while (!cursor.isAfterLast());
+
+        if (!cursor.isClosed())
+            cursor.close();
+
+        // Loop through all the apps we got from db and match those with the existing ones
+        for (AppDetail appFromDb : appsFromDb) {
+            for (AppDetail app : apps) {
+                if (appFromDb.name.equals(app.name)) {
+                    app.launchCount = appFromDb.launchCount;
+                    mostUsedApps.add(app);
+                }
             }
         }
 

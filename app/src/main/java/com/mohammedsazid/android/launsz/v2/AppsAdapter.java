@@ -23,6 +23,7 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.Settings;
@@ -37,14 +38,16 @@ import android.widget.Toast;
 
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
+import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
+import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
 
 import java.util.List;
 
 public class AppsAdapter extends RecyclerView.Adapter {
 
     FragmentActivity activity;
-    private List<AppDetail> apps;
     boolean appDock = false;
+    private List<AppDetail> apps;
 
     public AppsAdapter(FragmentActivity activity, List<AppDetail> apps, boolean appDock) {
         this.apps = apps;
@@ -70,6 +73,26 @@ public class AppsAdapter extends RecyclerView.Adapter {
                         String packageName = app.name.toString();
                         Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
                         if (activity != null) {
+                            ContentValues values = new ContentValues();
+                            /*
+                            The package name here is used by the content provider to either
+                            insert or update the launch count of the particular app.
+
+                            If the row is being inserted for the first time, the provider will set
+                            the initial launch count to 1 by itself.
+
+                            The handling of this insert/update works through the use of the particular
+                            content uri.
+                             */
+                            values.put(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME, app.name.toString());
+                            values.put(LaunszContract.AppsInfo.COLUMN_APP_LABEL, app.label.toString());
+
+                            // Insert or update - handled automatically by the content provider
+                            activity.getContentResolver().insert(
+                                    Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps/insert_or_update"),
+                                    values
+                            );
+
                             activity.startActivity(intent);
 
                             activity.overridePendingTransition(

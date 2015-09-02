@@ -33,6 +33,7 @@ public class AppDetail implements Comparable<AppDetail> {
     public CharSequence label;
     public CharSequence name;
     public Drawable icon;
+    public int launchCount;
 
     public AppDetail() {
     }
@@ -41,6 +42,7 @@ public class AppDetail implements Comparable<AppDetail> {
         this.label = another.label;
         this.name = another.name;
         this.icon = another.icon;
+        this.launchCount = another.launchCount;
     }
 
     @Override

@@ -65,7 +65,7 @@
 
         <provider
             android:name=".v2.data.AppsInfoProvider"
-            android:authorities="com.mohammedsazid.android.launsz"
+            android:authorities="com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider"
             android:enabled="true"
             android:exported="false" >
         </provider>

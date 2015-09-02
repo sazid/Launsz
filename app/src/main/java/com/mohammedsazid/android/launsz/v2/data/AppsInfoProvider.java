@@ -25,10 +25,30 @@ package com.mohammedsazid.android.launsz.v2.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 
 public class AppsInfoProvider extends ContentProvider {
+
+    private AppsInfoOpenHelper appsInfoOpenHelper;
+
+    // Constants for the content provider
+    public static final String CONTENT_AUTHORITY = "com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider";
+    public static final String URL = "content://" + CONTENT_AUTHORITY;
+    public static final Uri CONTENT_URI = Uri.parse(URL);
+
+    // Constants for matching Uris
+    private static final int APPSINFO_APPS = 1;
+    private static final int APPSINFO_APP = 2;
+    private static final UriMatcher uriMatcher;
+
+    static {
+        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(CONTENT_AUTHORITY, "/apps", APPSINFO_APPS);
+        uriMatcher.addURI(CONTENT_AUTHORITY, "/apps/app/#", APPSINFO_APP);
+    }
+
     public AppsInfoProvider() {
     }
 
@@ -54,6 +74,8 @@ public class AppsInfoProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         // TODO: Implement this to initialize your content provider on startup.
+        appsInfoOpenHelper = new AppsInfoOpenHelper(getContext());
+
         return false;
     }
 

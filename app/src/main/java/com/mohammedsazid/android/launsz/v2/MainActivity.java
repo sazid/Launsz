@@ -46,6 +46,7 @@ import android.widget.TextView;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -86,28 +87,7 @@ public class MainActivity extends FragmentActivity {
                      */
 
                     apps = appsService.apps;
-
-                    if (apps.size() == 0) {
-                        TextView tv = new TextView(MainActivity.this);
-//                        tv.setTextSize(24.0f);
-                        tv.setTextColor(Color.WHITE);
-
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.MATCH_PARENT,
-                                RelativeLayout.LayoutParams.MATCH_PARENT
-                        );
-
-                        tv.setLayoutParams(params);
-                        tv.setText("Your most used apps will appear here ;)");
-                        tv.setGravity(Gravity.CENTER);
-
-                        container.removeAllViews();
-                        container.addView(tv);
-                        container.requestLayout();
-                    } else {
-                        AppsAdapter adapter = new AppsAdapter(MainActivity.this, apps, true);
-                        appDockRv.setAdapter(adapter);
-                    }
+                    filterAndShowMostUsedApps();
                 }
             });
         }
@@ -117,6 +97,53 @@ public class MainActivity extends FragmentActivity {
             isAppsServiceBound = false;
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (appsService != null && apps != null) {
+            filterAndShowMostUsedApps();
+        }
+    }
+
+    private void filterAndShowMostUsedApps() {
+        // TODO: Read most used apps from the database with count
+        List<String> mostUsedAppsPackageName = new ArrayList<>();
+        mostUsedAppsPackageName.add("com.mohammedsazid.android.launsz");
+        mostUsedAppsPackageName.add("com.mohammedsazid.android.listr");
+        mostUsedAppsPackageName.add("com.mohammedsazid.unlockify");
+        mostUsedAppsPackageName.add("com.mohammedsazid.android.done");
+
+        List<AppDetail> mostUsedApps = new ArrayList<>();
+
+        for (AppDetail app : apps) {
+            if (mostUsedAppsPackageName.contains(app.name)) {
+                mostUsedApps.add(app);
+            }
+        }
+
+        if (mostUsedApps.size() == 0) {
+            TextView tv = new TextView(MainActivity.this);
+//                        tv.setTextSize(24.0f);
+            tv.setTextColor(Color.WHITE);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT
+            );
+
+            tv.setLayoutParams(params);
+            tv.setText("Your most used apps will appear here ;)");
+            tv.setGravity(Gravity.CENTER);
+
+            container.removeAllViews();
+            container.addView(tv);
+            container.requestLayout();
+        } else {
+            AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
+            appDockRv.setAdapter(adapter);
+        }
+    }
 
     private void bindViews() {
         container = (RelativeLayout) findViewById(R.id.app_dock_container);

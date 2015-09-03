@@ -63,6 +63,12 @@ public class AlphabetsFragment extends Fragment {
     public AlphabetsFragment() {
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        getActivity().unbindService(appsServiceConnection);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -154,7 +160,7 @@ public class AlphabetsFragment extends Fragment {
         Intent serviceIntent = new Intent(getActivity(), AppsService.class);
 
         // Start the service if it's not already running
-        getActivity().startService(serviceIntent);
+//        getActivity().startService(serviceIntent);
         getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 

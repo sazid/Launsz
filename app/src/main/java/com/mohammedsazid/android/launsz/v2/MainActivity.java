@@ -91,7 +91,7 @@ public class MainActivity extends FragmentActivity
                     // get the list and create the adapter.
                     filterAndShowMostUsedApps();
                 }
-            });
+            }, getPackageManager());
         }
 
         @Override
@@ -115,86 +115,88 @@ public class MainActivity extends FragmentActivity
     }
 
     private void filterAndShowMostUsedApps() {
-        apps = appsService.apps;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final List<AppDetail> mostUsedApps = new ArrayList<>();
-                List<AppDetail> appsFromDb = new ArrayList<>();
+        if (isAppsServiceBound) {
+            apps = appsService.apps;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final List<AppDetail> mostUsedApps = new ArrayList<>();
+                    List<AppDetail> appsFromDb = new ArrayList<>();
 
-                Cursor cursor = getContentResolver().query(
-                        Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
-                        new String[]{
-                                LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
-                                LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
-                        },
-                        null,
-                        null,
-                        null
-                );
+                    Cursor cursor = getContentResolver().query(
+                            Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
+                            new String[]{
+                                    LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
+                                    LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
+                            },
+                            null,
+                            null,
+                            null
+                    );
 
-                cursor.moveToFirst();
-                do {
-                    if (cursor != null && cursor.getCount() != 0) {
-                        AppDetail _app = new AppDetail();
+                    cursor.moveToFirst();
+                    do {
+                        if (cursor != null && cursor.getCount() != 0) {
+                            AppDetail _app = new AppDetail();
 
-                        _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
-                        _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
-                        appsFromDb.add(_app);
-                    } else {
-                        if (cursor == null) {
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(MainActivity.this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
-                        }
-                    }
-
-                    cursor.moveToNext();
-                } while (!cursor.isAfterLast());
-
-                if (!cursor.isClosed()) {
-                    cursor.close();
-                }
-
-                if (appsFromDb.size() == 0) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Make the hint view visible if there are no most used apps
-                            appDockHintTv.setVisibility(View.VISIBLE);
-                            appDockRv.setVisibility(View.INVISIBLE);
-                        }
-                    });
-                } else {
-                    // TODO: Possible optimization point
-                    // Loop through all the apps we got from db and match those with the existing ones
-                    for (AppDetail appFromDb : appsFromDb) {
-                        for (AppDetail app : apps) {
-                            if (appFromDb.name.equals(app.name)) {
-                                app.launchCount = appFromDb.launchCount;
-                                mostUsedApps.add(app);
+                            _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
+                            _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
+                            appsFromDb.add(_app);
+                        } else {
+                            if (cursor == null) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(MainActivity.this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
                             }
                         }
+
+                        cursor.moveToNext();
+                    } while (!cursor.isAfterLast());
+
+                    if (!cursor.isClosed()) {
+                        cursor.close();
                     }
 
-                    final AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Make the app dock visible if there is at least one used app
-                            appDockRv.setVisibility(View.VISIBLE);
-                            appDockHintTv.setVisibility(View.INVISIBLE);
-                            appDockRv.setAdapter(adapter);
+                    if (appsFromDb.size() == 0) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Make the hint view visible if there are no most used apps
+                                appDockHintTv.setVisibility(View.VISIBLE);
+                                appDockRv.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                    } else {
+                        // TODO: Possible optimization point
+                        // Loop through all the apps we got from db and match those with the existing ones
+                        for (AppDetail appFromDb : appsFromDb) {
+                            for (AppDetail app : apps) {
+                                if (appFromDb.name.equals(app.name)) {
+                                    app.launchCount = appFromDb.launchCount;
+                                    mostUsedApps.add(app);
+                                }
+                            }
                         }
-                    });
+
+                        final AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Make the app dock visible if there is at least one used app
+                                appDockRv.setVisibility(View.VISIBLE);
+                                appDockHintTv.setVisibility(View.INVISIBLE);
+                                appDockRv.setAdapter(adapter);
+                            }
+                        });
+                    }
                 }
-            }
-        });
-        thread.start();
+            });
+            thread.start();
+        }
     }
 
     private void bindViews() {
@@ -259,7 +261,6 @@ public class MainActivity extends FragmentActivity
         Intent serviceIntent = new Intent(this, AppsService.class);
 
         // Start the service if it's not already running
-        startService(serviceIntent);
         bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 

@@ -99,7 +99,7 @@ public class AppsFragment extends Fragment {
                         appsRv.setAdapter(adapter);
                     }
                 }
-            });
+            }, null);
         }
 
         @Override

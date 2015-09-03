@@ -83,8 +83,6 @@ public class MainActivity extends FragmentActivity {
                 public void onFinish() {
                     // Once the service has finished loading the apps (if not already),
                     // get the list and create the adapter.
-
-                    apps = appsService.apps;
                     filterAndShowMostUsedApps();
                 }
             });
@@ -111,6 +109,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void filterAndShowMostUsedApps() {
+        apps = appsService.apps;
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -151,8 +150,9 @@ public class MainActivity extends FragmentActivity {
                     cursor.moveToNext();
                 } while (!cursor.isAfterLast());
 
-                if (!cursor.isClosed())
+                if (!cursor.isClosed()) {
                     cursor.close();
+                }
 
                 if (appsFromDb.size() == 0) {
                     handler.post(new Runnable() {

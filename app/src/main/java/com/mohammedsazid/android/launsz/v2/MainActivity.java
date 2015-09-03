@@ -28,7 +28,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,16 +35,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,12 +61,12 @@ public class MainActivity extends FragmentActivity {
     ImageView playPauseIv;
     ImageView nextTrackIv;
     RecyclerView appDockRv;
-    RelativeLayout container;
+    TextView appDockHintTv;
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
-    private Handler handler;
 
+    private Handler handler;
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -118,7 +114,7 @@ public class MainActivity extends FragmentActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<AppDetail> mostUsedApps = new ArrayList<>();
+                final List<AppDetail> mostUsedApps = new ArrayList<>();
                 List<AppDetail> appsFromDb = new ArrayList<>();
 
                 Cursor cursor = getContentResolver().query(
@@ -162,22 +158,9 @@ public class MainActivity extends FragmentActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            TextView tv = new TextView(MainActivity.this);
-//                        tv.setTextSize(24.0f);
-                            tv.setTextColor(Color.WHITE);
-
-                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                                    RelativeLayout.LayoutParams.MATCH_PARENT
-                            );
-
-                            tv.setLayoutParams(params);
-                            tv.setText("Your most used apps will appear here ;)");
-                            tv.setGravity(Gravity.CENTER);
-
-                            container.removeAllViews();
-                            container.addView(tv);
-                            container.requestLayout();
+                            // Make the hint view visible if there are no most used apps
+                            appDockHintTv.setVisibility(View.VISIBLE);
+                            appDockRv.setVisibility(View.INVISIBLE);
                         }
                     });
                 } else {
@@ -196,6 +179,9 @@ public class MainActivity extends FragmentActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
+                            // Make the app dock visible if there is at least one used app
+                            appDockRv.setVisibility(View.VISIBLE);
+                            appDockHintTv.setVisibility(View.INVISIBLE);
                             appDockRv.setAdapter(adapter);
                         }
                     });
@@ -206,12 +192,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void bindViews() {
-        container = (RelativeLayout) findViewById(R.id.app_dock_container);
         alphabetsFragmentContainer = (FrameLayout) findViewById(R.id.alphabets_fragment_container);
         previousTrackIv = (ImageView) findViewById(R.id.previousTrackBtn);
         playPauseIv = (ImageView) findViewById(R.id.playPauseTrackBtn);
         nextTrackIv = (ImageView) findViewById(R.id.nextTrackBtn);
         appDockRv = (RecyclerView) findViewById(R.id.app_dock_rv);
+        appDockHintTv = (TextView) findViewById(R.id.app_dock_hint_tv);
     }
 
     @Override

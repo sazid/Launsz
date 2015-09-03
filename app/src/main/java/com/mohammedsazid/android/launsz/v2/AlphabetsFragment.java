@@ -36,7 +36,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,19 +47,46 @@ import java.util.Map;
 
 public class AlphabetsFragment extends Fragment {
 
-    private AppsService appsService;
     boolean isAppsServiceBound = false;
-
+    RecyclerView alphabetsRv;
+    private AppsService appsService;
     private List<String> alphabetsList;
     private Map<String, Integer> alphabetsMap;
+    // Every service needs to be bound through a ServiceConnection object
+    private ServiceConnection appsServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AppsService.AppsServiceBinder binder = (AppsService.AppsServiceBinder) service;
+            appsService = binder.getService();
+            isAppsServiceBound = true;
 
-    RecyclerView alphabetsRv;
+            appsService.getAppsDetails(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    alphabetsList = appsService.alphabetsList;
+                    alphabetsMap = appsService.alphabetsMap;
+
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+                    alphabetsRv.setAdapter(adapter);
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isAppsServiceBound = false;
+        }
+    };
+
+    public AlphabetsFragment() {
+    }
 
     private void bindViews(View rootView) {
         alphabetsRv = (RecyclerView) rootView.findViewById(R.id.alphabets_rv);
-    }
-
-    public AlphabetsFragment() {
     }
 
     @Override
@@ -163,35 +189,5 @@ public class AlphabetsFragment extends Fragment {
 //        getActivity().startService(serviceIntent);
         getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
-
-    // Every service needs to be bound through a ServiceConnection object
-    private ServiceConnection appsServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            AppsService.AppsServiceBinder binder = (AppsService.AppsServiceBinder) service;
-            appsService = binder.getService();
-            isAppsServiceBound = true;
-
-            appsService.getAppsDetails(new ICallback() {
-                @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onFinish() {
-                    alphabetsList = appsService.alphabetsList;
-                    alphabetsMap = appsService.alphabetsMap;
-
-                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
-                    alphabetsRv.setAdapter(adapter);
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isAppsServiceBound = false;
-        }
-    };
 
 }

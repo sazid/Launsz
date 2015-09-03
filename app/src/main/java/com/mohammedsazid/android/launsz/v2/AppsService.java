@@ -84,15 +84,16 @@ public class AppsService extends Service {
     }
 
     public void loadAppsDetails() {
+        Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (preferences.getBoolean(FORCE_REFRESH, false)) {
             NEEDS_REFRESH = true;
-            Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
         }
 
         packageManager = getPackageManager();
 
         if (NEEDS_REFRESH) {
+            Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
             apps = new ArrayList<>();
             alphabetsMap = new TreeMap<>();
             alphabetsList = new ArrayList<>();

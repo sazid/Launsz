@@ -38,6 +38,7 @@ import android.widget.Toast;
 
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
+import com.mohammedsazid.android.launsz.SettingsActivity;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
 import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
 
@@ -62,7 +63,11 @@ public class AppsAdapter extends RecyclerView.Adapter {
 
         viewHolder.appIconIv.setImageDrawable(app.icon);
         if (!appDock) {
-            viewHolder.appLabelTv.setText(app.label);
+            if (app.name.toString().equals(activity.getApplicationContext().getPackageName())) {
+                viewHolder.appLabelTv.setText(activity.getString(R.string.title_activity_settings));
+            } else {
+                viewHolder.appLabelTv.setText(app.label);
+            }
         }
 
         try {
@@ -71,33 +76,43 @@ public class AppsAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     try {
                         String packageName = app.name.toString();
-                        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
-                        if (activity != null) {
-                            ContentValues values = new ContentValues();
-                            /*
-                            The package name here is used by the content provider to either
-                            insert or update the launch count of the particular app.
+                        Intent intent;
 
-                            If the row is being inserted for the first time, the provider will set
-                            the initial launch count to 1 by itself.
+                        // Do not store the data for launching the settings activity
+                        if (packageName.equals(activity.getApplicationContext().getPackageName())) {
+                            // TODO: Launch SettingsActivity
+                            Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
+//                            intent = new Intent(activity, SettingsActivity.class);
+//                            activity.startActivity(intent);
+                        } else {
+                            intent = activity.getPackageManager().getLaunchIntentForPackage(packageName);
+                            if (activity != null) {
+                                ContentValues values = new ContentValues();
+                                /*
+                                The package name here is used by the content provider to either
+                                insert or update the launch count of the particular app.
 
-                            The handling of this insert/update works through the use of the particular
-                            content uri.
-                             */
-                            values.put(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME, app.name.toString());
-                            values.put(LaunszContract.AppsInfo.COLUMN_APP_LABEL, app.label.toString());
+                                If the row is being inserted for the first time, the provider will set
+                                the initial launch count to 1 by itself.
 
-                            // Insert or update - handled automatically by the content provider
-                            activity.getContentResolver().insert(
-                                    Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps/insert_or_update"),
-                                    values
-                            );
+                                The handling of this insert/update works through the use of the particular
+                                content uri.
+                                 */
+                                values.put(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME, app.name.toString());
+                                values.put(LaunszContract.AppsInfo.COLUMN_APP_LABEL, app.label.toString());
 
-                            activity.startActivity(intent);
+                                // Insert or update - handled automatically by the content provider
+                                activity.getContentResolver().insert(
+                                        Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps/insert_or_update"),
+                                        values
+                                );
 
-                            activity.overridePendingTransition(
-                                    R.anim.slide_in_bottom, R.anim.slide_out_top
-                            );
+                                activity.startActivity(intent);
+
+                                activity.overridePendingTransition(
+                                        R.anim.slide_in_bottom, R.anim.slide_out_top
+                                );
+                            }
                         }
                     } catch (Exception e) {
                         activity.getSupportFragmentManager().popBackStack();

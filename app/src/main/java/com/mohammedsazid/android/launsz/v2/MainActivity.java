@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -394,7 +395,28 @@ public class MainActivity extends FragmentActivity
                                 new MaterialDialog.Builder(MainActivity.this)
                                         .title(getString(R.string.app_name))
                                         .content(R.string.about_summary)
+                                        .positiveText("Email")
+                                        .positiveColor(Color.WHITE)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                super.onPositive(dialog);
+
+                                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                                        "mailto", "sazidozon@gmail.com", null));
+                                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + getString(R.string.app_name) + "]: ");
+                                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                                            }
+                                        })
                                         .show();
+                                break;
+                            case 3:
+                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                        "mailto", "sazidozon@gmail.com", null));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + getString(R.string.app_name) + "] (FEEDBACK): ");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                startActivity(Intent.createChooser(emailIntent, "Send email..."));
                                 break;
                             default:
                                 break;

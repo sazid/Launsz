@@ -392,7 +392,7 @@ public class MainActivity extends FragmentActivity
                                 break;
                             case 2:
                                 new MaterialDialog.Builder(MainActivity.this)
-                                        .title("About")
+                                        .title(getString(R.string.app_name))
                                         .content(R.string.about_summary)
                                         .show();
                                 break;

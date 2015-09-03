@@ -23,21 +23,18 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
@@ -45,12 +42,11 @@ import java.util.Map;
 
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
-    private static final int ALPHABET_TYPE = 0;
-//    private static final int HISTORY_TYPE = 1;
+    //    private static final int HISTORY_TYPE = 1;
 //    private static final int ALL_TYPE = 2;
 //    private static final int MENU_TYPE = 3;
     public static final String ALPHABET_CHARACTER = "alphabet_character";
-
+    private static final int ALPHABET_TYPE = 0;
     FragmentActivity activity;
     List<String> alphabetsList;
     private Map<String, Integer> alphabetsMap;
@@ -63,8 +59,14 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
+        final AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
         View.OnClickListener onClickListener;
+
+        // TODO: Allow user to turn on/off haptic feedback
+        final boolean hapticFeedbackEnabled = false;
+        if (hapticFeedbackEnabled) {
+            holder.itemView.setHapticFeedbackEnabled(true);
+        }
 
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
@@ -85,6 +87,10 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     onClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (hapticFeedbackEnabled) {
+                                viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                            }
+
                             Bundle bundle = new Bundle();
                             bundle.putString(ALPHABET_CHARACTER, alphabet);
                             Fragment fragment = new AppsFragment();

@@ -46,9 +46,9 @@ import java.util.Map;
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     private static final int ALPHABET_TYPE = 0;
-    //    private static final int HISTORY_TYPE = 1;
+//    private static final int HISTORY_TYPE = 1;
 //    private static final int ALL_TYPE = 2;
-    private static final int MENU_TYPE = 3;
+//    private static final int MENU_TYPE = 3;
     public static final String ALPHABET_CHARACTER = "alphabet_character";
 
     FragmentActivity activity;
@@ -107,48 +107,48 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     viewHolder.itemView.setOnClickListener(onClickListener);
                 }
                 break;
-            case MENU_TYPE:
-                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
-
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new MaterialDialog.Builder(activity)
-                                .title("Menu")
-                                .items(R.array.menu_items)
-                                .itemsCallback(new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
-                                        Intent i;
-
-                                        switch (position) {
-                                            case 0:
-//                                        i = new Intent(activity, SettingsActivity.class);
-//                                        activity.startActivity(i);
-                                                Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 1:
-                                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
-                                                activity.startActivity(Intent.createChooser(i, "Select Wallpaper"));
-                                                break;
-                                            case 2:
-                                                new MaterialDialog.Builder(activity)
-                                                        .title("About")
-                                                        .content(R.string.about_summary)
-                                                        .show();
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                })
-                                .show();
-                    }
-                };
-
-                viewHolder.itemView.setOnClickListener(onClickListener);
-                viewHolder.iconIv.setOnClickListener(onClickListener);
-                break;
+//            case MENU_TYPE:
+//                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
+//
+//                onClickListener = new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        new MaterialDialog.Builder(activity)
+//                                .title("Menu")
+//                                .items(R.array.menu_items)
+//                                .itemsCallback(new MaterialDialog.ListCallback() {
+//                                    @Override
+//                                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+//                                        Intent i;
+//
+//                                        switch (position) {
+//                                            case 0:
+////                                        i = new Intent(activity, SettingsActivity.class);
+////                                        activity.startActivity(i);
+//                                                Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
+//                                                break;
+//                                            case 1:
+//                                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+//                                                activity.startActivity(Intent.createChooser(i, "Select Wallpaper"));
+//                                                break;
+//                                            case 2:
+//                                                new MaterialDialog.Builder(activity)
+//                                                        .title("About")
+//                                                        .content(R.string.about_summary)
+//                                                        .show();
+//                                                break;
+//                                            default:
+//                                                break;
+//                                        }
+//                                    }
+//                                })
+//                                .show();
+//                    }
+//                };
+//
+//                viewHolder.itemView.setOnClickListener(onClickListener);
+//                viewHolder.iconIv.setOnClickListener(onClickListener);
+//                break;
 //            case HISTORY_TYPE:
 //                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
 //                break;
@@ -196,8 +196,8 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         // For every another type of view add it to the original size
-        // 1 icon types are added to existing list of alphabets
-        return alphabetsMap.size() + 1;
+        // 0 icon types are added to existing list of alphabets
+        return alphabetsMap.size();
     }
 
     @Override
@@ -208,10 +208,9 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
         } else if (position == 1) {
         if (position == 0) {
             return ALL_TYPE;
-        } else */
-        if (position == (getItemCount() - 1)) {
+        } else if (position == (getItemCount() - 1)) {
             return MENU_TYPE;
-        }
+        } */
 
         return ALPHABET_TYPE;
     }

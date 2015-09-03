@@ -108,6 +108,8 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
+        android:hapticFeedbackEnabled="true"
+        android:longClickable="true"
         android:onClick="appDockAllAppsOnClick"
         android:padding="16dp"
         android:text="ALL"

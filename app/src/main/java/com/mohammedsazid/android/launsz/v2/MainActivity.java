@@ -38,6 +38,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -45,6 +46,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
@@ -54,7 +56,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+        implements View.OnLongClickListener {
 
     FrameLayout alphabetsFragmentContainer;
     ImageView previousTrackIv;
@@ -209,6 +212,7 @@ public class MainActivity extends FragmentActivity {
         handler = new Handler();
 
         bindViews();
+        setListeners();
         loadAppDock();
 
         getSupportFragmentManager().beginTransaction()
@@ -230,6 +234,10 @@ public class MainActivity extends FragmentActivity {
 //                loadAppDock();
 //            }
 //        });
+    }
+
+    private void setListeners() {
+        appDockAllAppsTv.setOnLongClickListener(this);
     }
 
     private void loadAppDock() {
@@ -338,6 +346,7 @@ public class MainActivity extends FragmentActivity {
         // Change the "ALL" apps to the selected letter
         // Allow to create only 1 fragment when pressing the button
         appDockAllAppsTv.setText("ALL");
+        view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(
@@ -350,6 +359,53 @@ public class MainActivity extends FragmentActivity {
         } else {
             getSupportFragmentManager().popBackStack();
         }
+    }
+
+    private void showAboutDialog() {
+        new MaterialDialog.Builder(this)
+                .title("Menu")
+                .items(R.array.menu_items)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+                        Intent i;
+
+                        switch (position) {
+                            case 0:
+//                                        i = new Intent(activity, SettingsActivity.class);
+//                                        activity.startActivity(i);
+                                Toast.makeText(MainActivity.this, "Under development :p", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                startActivity(Intent.createChooser(i, "Select Wallpaper"));
+                                break;
+                            case 2:
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title("About")
+                                        .content(R.string.about_summary)
+                                        .show();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+
+        switch (id) {
+            case R.id.app_dock_all_apps_tv:
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                showAboutDialog();
+                break;
+        }
+
+        return false;
     }
 
 }

@@ -118,7 +118,8 @@ public class AppsService extends Service {
 
                 apps.add(app);
 
-                String initial = String.valueOf(app.label.toString().charAt(0));
+                // TODO: Add accented alphabets comparison here
+                String initial = String.valueOf(app.label.toString().trim().toUpperCase().charAt(0));
                 if (alphabetsMap.containsKey(initial)) {
                     alphabetsMap.put(initial, alphabetsMap.get(initial) + 1);
                 }
@@ -136,7 +137,7 @@ public class AppsService extends Service {
         for (AppDetail app : apps) {
             if (filter == null || filter.equals("*")) {
                 filteredApps.add(app);
-            } else if (app.label.toString().startsWith(filter)) {
+            } else if (app.label.toString().trim().toUpperCase().startsWith(filter.toUpperCase())) {
                 filteredApps.add(app);
             }
         }

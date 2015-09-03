@@ -332,4 +332,19 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+    public void appDockAllAppsOnClick(View view) {
+        // Change the "ALL" apps to the selected letter
+        // Allow to create only 1 fragment when pressing the button
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_bottom, R.anim.slide_out_top,
+                            R.anim.slide_in_top, R.anim.slide_out_bottom
+                    )
+                    .addToBackStack("apps_fragment")
+                    .add(R.id.alphabets_fragment_container, new AppsFragment())
+                    .commit();
+        }
+    }
+
 }

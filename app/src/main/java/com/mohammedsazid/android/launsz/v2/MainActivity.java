@@ -32,6 +32,7 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
@@ -68,6 +69,7 @@ public class MainActivity extends FragmentActivity {
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
+    private Handler handler;
 
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
@@ -99,6 +101,12 @@ public class MainActivity extends FragmentActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(appsServiceConnection);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (appsService != null && apps != null) {
@@ -107,74 +115,94 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void filterAndShowMostUsedApps() {
-        // TODO: Move the code to a background thread
-        List<AppDetail> mostUsedApps = new ArrayList<>();
-        List<AppDetail> appsFromDb = new ArrayList<>();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<AppDetail> mostUsedApps = new ArrayList<>();
+                List<AppDetail> appsFromDb = new ArrayList<>();
 
-        Cursor cursor = getContentResolver().query(
-                Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
-                new String[]{
-                        LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
-                        LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
-                },
-                null,
-                null,
-                null
-        );
+                Cursor cursor = getContentResolver().query(
+                        Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
+                        new String[]{
+                                LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
+                                LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
+                        },
+                        null,
+                        null,
+                        null
+                );
 
-        cursor.moveToFirst();
-        do {
-            if (cursor != null && cursor.getCount() != 0) {
-                AppDetail _app = new AppDetail();
+                cursor.moveToFirst();
+                do {
+                    if (cursor != null && cursor.getCount() != 0) {
+                        AppDetail _app = new AppDetail();
 
-                _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
-                _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
-                appsFromDb.add(_app);
-            } else {
-                if (cursor == null) {
-                    Toast.makeText(this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
-                    Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
-                }
-            }
-
-            cursor.moveToNext();
-        } while (!cursor.isAfterLast());
-
-        if (!cursor.isClosed())
-            cursor.close();
-
-        if (appsFromDb.size() == 0) {
-            TextView tv = new TextView(MainActivity.this);
-//                        tv.setTextSize(24.0f);
-            tv.setTextColor(Color.WHITE);
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT
-            );
-
-            tv.setLayoutParams(params);
-            tv.setText("Your most used apps will appear here ;)");
-            tv.setGravity(Gravity.CENTER);
-
-            container.removeAllViews();
-            container.addView(tv);
-            container.requestLayout();
-        } else {
-            // TODO: Possible optimization point
-            // Loop through all the apps we got from db and match those with the existing ones
-            for (AppDetail appFromDb : appsFromDb) {
-                for (AppDetail app : apps) {
-                    if (appFromDb.name.equals(app.name)) {
-                        app.launchCount = appFromDb.launchCount;
-                        mostUsedApps.add(app);
+                        _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
+                        _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
+                        appsFromDb.add(_app);
+                    } else {
+                        if (cursor == null) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
+                        }
                     }
+
+                    cursor.moveToNext();
+                } while (!cursor.isAfterLast());
+
+                if (!cursor.isClosed())
+                    cursor.close();
+
+                if (appsFromDb.size() == 0) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TextView tv = new TextView(MainActivity.this);
+//                        tv.setTextSize(24.0f);
+                            tv.setTextColor(Color.WHITE);
+
+                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                                    RelativeLayout.LayoutParams.MATCH_PARENT
+                            );
+
+                            tv.setLayoutParams(params);
+                            tv.setText("Your most used apps will appear here ;)");
+                            tv.setGravity(Gravity.CENTER);
+
+                            container.removeAllViews();
+                            container.addView(tv);
+                            container.requestLayout();
+                        }
+                    });
+                } else {
+                    // TODO: Possible optimization point
+                    // Loop through all the apps we got from db and match those with the existing ones
+                    for (AppDetail appFromDb : appsFromDb) {
+                        for (AppDetail app : apps) {
+                            if (appFromDb.name.equals(app.name)) {
+                                app.launchCount = appFromDb.launchCount;
+                                mostUsedApps.add(app);
+                            }
+                        }
+                    }
+
+                    final AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            appDockRv.setAdapter(adapter);
+                        }
+                    });
                 }
             }
-
-            AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
-            appDockRv.setAdapter(adapter);
-        }
+        });
+        thread.start();
     }
 
     private void bindViews() {
@@ -190,6 +218,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        handler = new Handler();
 
         bindViews();
         loadAppDock();

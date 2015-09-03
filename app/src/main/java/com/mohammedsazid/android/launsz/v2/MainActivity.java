@@ -62,6 +62,7 @@ public class MainActivity extends FragmentActivity {
     ImageView nextTrackIv;
     RecyclerView appDockRv;
     TextView appDockHintTv;
+    TextView appDockAllAppsTv;
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
@@ -198,6 +199,7 @@ public class MainActivity extends FragmentActivity {
         nextTrackIv = (ImageView) findViewById(R.id.nextTrackBtn);
         appDockRv = (RecyclerView) findViewById(R.id.app_dock_rv);
         appDockHintTv = (TextView) findViewById(R.id.app_dock_hint_tv);
+        appDockAllAppsTv = (TextView) findViewById(R.id.app_dock_all_apps_tv);
     }
 
     @Override
@@ -335,6 +337,7 @@ public class MainActivity extends FragmentActivity {
     public void appDockAllAppsOnClick(View view) {
         // Change the "ALL" apps to the selected letter
         // Allow to create only 1 fragment when pressing the button
+        appDockAllAppsTv.setText("ALL");
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(
@@ -344,6 +347,8 @@ public class MainActivity extends FragmentActivity {
                     .addToBackStack("apps_fragment")
                     .add(R.id.alphabets_fragment_container, new AppsFragment())
                     .commit();
+        } else {
+            getSupportFragmentManager().popBackStack();
         }
     }
 

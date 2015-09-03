@@ -98,6 +98,9 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                                     .addToBackStack("apps_fragment")
                                     .add(R.id.alphabets_fragment_container, fragment)
                                     .commit();
+
+                            TextView appDockAllAppsTv = (TextView) activity.findViewById(R.id.app_dock_all_apps_tv);
+                            appDockAllAppsTv.setText(alphabet);
                         }
                     };
 

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     private static final int ALPHABET_TYPE = 0;
     //    private static final int HISTORY_TYPE = 1;
-    private static final int ALL_TYPE = 2;
+//    private static final int ALL_TYPE = 2;
     private static final int MENU_TYPE = 3;
     public static final String ALPHABET_CHARACTER = "alphabet_character";
 
@@ -68,8 +69,8 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
                 // because first and the last items are icons
-                final int posForAlphabets = position - 1;
-                final String alphabet = alphabetsList.get(posForAlphabets);
+//                final int posForAlphabets = position - 1;
+                final String alphabet = alphabetsList.get(position);
                 viewHolder.alphabetTv.setText(alphabet);
                 final boolean isDisabled = alphabetsMap.get(alphabet) <= 0;
 
@@ -148,26 +149,26 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 //            case HISTORY_TYPE:
 //                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
 //                break;
-            case ALL_TYPE:
-                viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(
-                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
-                                        R.anim.slide_in_top, R.anim.slide_out_bottom
-                                )
-                                .addToBackStack("apps_fragment")
-                                .add(R.id.alphabets_fragment_container, new AppsFragment())
-                                .commit();
-                    }
-                };
-
-                viewHolder.itemView.setOnClickListener(onClickListener);
-                viewHolder.iconIv.setOnClickListener(onClickListener);
-
-                break;
+//            case ALL_TYPE:
+//                viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
+//                onClickListener = new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        activity.getSupportFragmentManager().beginTransaction()
+//                                .setCustomAnimations(
+//                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
+//                                        R.anim.slide_in_top, R.anim.slide_out_bottom
+//                                )
+//                                .addToBackStack("apps_fragment")
+//                                .add(R.id.alphabets_fragment_container, new AppsFragment())
+//                                .commit();
+//                    }
+//                };
+//
+//                viewHolder.itemView.setOnClickListener(onClickListener);
+//                viewHolder.iconIv.setOnClickListener(onClickListener);
+//
+//                break;
         }
     }
 
@@ -191,8 +192,9 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        // 2 icon types are added to existing list of alphabets
-        return alphabetsMap.size() + 2;
+        // For every another type of view add it to the original size
+        // 1 icon types are added to existing list of alphabets
+        return alphabetsMap.size() + 1;
     }
 
     @Override
@@ -200,10 +202,11 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
         /*if (position == 0) {
             return HISTORY_TYPE;
-        } else if (position == 1) {*/
+        } else if (position == 1) {
         if (position == 0) {
             return ALL_TYPE;
-        } else if (position == (getItemCount() - 1)) {
+        } else */
+        if (position == (getItemCount() - 1)) {
             return MENU_TYPE;
         }
 

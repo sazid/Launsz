@@ -23,20 +23,18 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
@@ -44,12 +42,11 @@ import java.util.Map;
 
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
-    private static final int ALPHABET_TYPE = 0;
     //    private static final int HISTORY_TYPE = 1;
-    private static final int ALL_TYPE = 2;
-    private static final int MENU_TYPE = 3;
+//    private static final int ALL_TYPE = 2;
+//    private static final int MENU_TYPE = 3;
     public static final String ALPHABET_CHARACTER = "alphabet_character";
-
+    private static final int ALPHABET_TYPE = 0;
     FragmentActivity activity;
     List<String> alphabetsList;
     private Map<String, Integer> alphabetsMap;
@@ -62,14 +59,20 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
+        final AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
         View.OnClickListener onClickListener;
+
+        // TODO: Allow user to turn on/off haptic feedback
+        final boolean hapticFeedbackEnabled = false;
+        if (hapticFeedbackEnabled) {
+            holder.itemView.setHapticFeedbackEnabled(true);
+        }
 
         switch (viewHolder.viewType) {
             case ALPHABET_TYPE:
                 // because first and the last items are icons
-                final int posForAlphabets = position - 1;
-                final String alphabet = alphabetsList.get(posForAlphabets);
+//                final int posForAlphabets = position - 1;
+                final String alphabet = alphabetsList.get(position);
                 viewHolder.alphabetTv.setText(alphabet);
                 final boolean isDisabled = alphabetsMap.get(alphabet) <= 0;
 
@@ -84,6 +87,10 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                     onClickListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            if (hapticFeedbackEnabled) {
+                                viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                            }
+
                             Bundle bundle = new Bundle();
                             bundle.putString(ALPHABET_CHARACTER, alphabet);
                             Fragment fragment = new AppsFragment();
@@ -97,77 +104,80 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
                                     .addToBackStack("apps_fragment")
                                     .add(R.id.alphabets_fragment_container, fragment)
                                     .commit();
+
+                            TextView appDockAllAppsTv = (TextView) activity.findViewById(R.id.app_dock_all_apps_tv);
+                            appDockAllAppsTv.setText(alphabet);
                         }
                     };
 
                     viewHolder.itemView.setOnClickListener(onClickListener);
                 }
                 break;
-            case MENU_TYPE:
-                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
-
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new MaterialDialog.Builder(activity)
-                                .title("Menu")
-                                .items(R.array.menu_items)
-                                .itemsCallback(new MaterialDialog.ListCallback() {
-                                    @Override
-                                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
-                                        Intent i;
-
-                                        switch (position) {
-                                            case 0:
-//                                        i = new Intent(activity, SettingsActivity.class);
-//                                        activity.startActivity(i);
-                                                Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 1:
-                                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
-                                                activity.startActivity(Intent.createChooser(i, "Select Wallpaper"));
-                                                break;
-                                            case 2:
-                                                new MaterialDialog.Builder(activity)
-                                                        .title("About")
-                                                        .content(R.string.about_summary)
-                                                        .show();
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }
-                                })
-                                .show();
-                    }
-                };
-
-                viewHolder.itemView.setOnClickListener(onClickListener);
-                viewHolder.iconIv.setOnClickListener(onClickListener);
-                break;
+//            case MENU_TYPE:
+//                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
+//
+//                onClickListener = new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        new MaterialDialog.Builder(activity)
+//                                .title("Menu")
+//                                .items(R.array.menu_items)
+//                                .itemsCallback(new MaterialDialog.ListCallback() {
+//                                    @Override
+//                                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+//                                        Intent i;
+//
+//                                        switch (position) {
+//                                            case 0:
+////                                        i = new Intent(activity, SettingsActivity.class);
+////                                        activity.startActivity(i);
+//                                                Toast.makeText(activity, "Under development :p", Toast.LENGTH_SHORT).show();
+//                                                break;
+//                                            case 1:
+//                                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+//                                                activity.startActivity(Intent.createChooser(i, "Select Wallpaper"));
+//                                                break;
+//                                            case 2:
+//                                                new MaterialDialog.Builder(activity)
+//                                                        .title("About")
+//                                                        .content(R.string.about_summary)
+//                                                        .show();
+//                                                break;
+//                                            default:
+//                                                break;
+//                                        }
+//                                    }
+//                                })
+//                                .show();
+//                    }
+//                };
+//
+//                viewHolder.itemView.setOnClickListener(onClickListener);
+//                viewHolder.iconIv.setOnClickListener(onClickListener);
+//                break;
 //            case HISTORY_TYPE:
 //                viewHolder.iconIv.setImageResource(R.drawable.ic_history);
 //                break;
-            case ALL_TYPE:
-                viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
-                onClickListener = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(
-                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
-                                        R.anim.slide_in_top, R.anim.slide_out_bottom
-                                )
-                                .addToBackStack("apps_fragment")
-                                .add(R.id.alphabets_fragment_container, new AppsFragment())
-                                .commit();
-                    }
-                };
-
-                viewHolder.itemView.setOnClickListener(onClickListener);
-                viewHolder.iconIv.setOnClickListener(onClickListener);
-
-                break;
+//            case ALL_TYPE:
+//                viewHolder.iconIv.setImageResource(R.drawable.ic_globe_white);
+//                onClickListener = new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        activity.getSupportFragmentManager().beginTransaction()
+//                                .setCustomAnimations(
+//                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
+//                                        R.anim.slide_in_top, R.anim.slide_out_bottom
+//                                )
+//                                .addToBackStack("apps_fragment")
+//                                .add(R.id.alphabets_fragment_container, new AppsFragment())
+//                                .commit();
+//                    }
+//                };
+//
+//                viewHolder.itemView.setOnClickListener(onClickListener);
+//                viewHolder.iconIv.setOnClickListener(onClickListener);
+//
+//                break;
         }
     }
 
@@ -191,8 +201,9 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        // 2 icon types are added to existing list of alphabets
-        return alphabetsMap.size() + 2;
+        // For every another type of view add it to the original size
+        // 0 icon types are added to existing list of alphabets
+        return alphabetsMap.size();
     }
 
     @Override
@@ -200,12 +211,12 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 
         /*if (position == 0) {
             return HISTORY_TYPE;
-        } else if (position == 1) {*/
+        } else if (position == 1) {
         if (position == 0) {
             return ALL_TYPE;
         } else if (position == (getItemCount() - 1)) {
             return MENU_TYPE;
-        }
+        } */
 
         return ALPHABET_TYPE;
     }

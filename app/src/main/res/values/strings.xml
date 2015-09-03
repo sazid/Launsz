@@ -11,6 +11,7 @@
         <item>Settings</item>
         <item>Wallpaper</item>
         <item>About</item>
+        <item>Feedback</item>
     </string-array>
 
     <string name="color_enabled_key">color_enabled_key</string>
@@ -21,8 +22,20 @@
     <string name="music_ctrl_key">music_ctrl_key</string>
 
     <string name="music_ctrl_summ">Control music by swiping left/right/up/down\nUp: Play/Pause music\nDown: Stop music\nRight: Next track\nLeft: Previous track</string>
-    <string name="about_summary">
-        Launsz\nDead simple launcher focused on productivity, speed &amp; simplicity.\n\n\nAuthor:\nMohammed Sazid Al Rashid\nTwitter: @sazidz\nG+: sazidozon\nXDA: sazid4199
+    <string name="about_summary"><b>About</b>
+        \nDead simple launcher focused on productivity, speed &amp; simplicity.
+        <hr />
+
+        \n\n<b>Author:</b>
+        \nMohammed Sazid Al Rashid
+        \nTwitter: <a href="http://twitter.com/sazidz">@sazidz</a>
+        \nG+: <a href="http://plus.google.com/+SazidAlRashid">sazidozon</a>
+        \nXDA: <a href="http://forum.xda-developers.com/member.php?u=5585719">sazid4199</a>
+
+        \n\n<b>Special thanks to:</b>
+        \n> My big brother ;)
+
+        \n\n\n<i>Feature request? Suggestion? Critique? Complain? Why not send an email? :D</i>
     </string>
     <string name="email_summ">Contact the developer</string>
     <string name="email_uri">mailto:sazidozon@gmail.com</string>

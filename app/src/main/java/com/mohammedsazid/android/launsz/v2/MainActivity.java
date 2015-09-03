@@ -27,40 +27,52 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.util.Log;
+import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
+import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
+import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity
+        implements View.OnLongClickListener {
 
     FrameLayout alphabetsFragmentContainer;
     ImageView previousTrackIv;
     ImageView playPauseIv;
     ImageView nextTrackIv;
     RecyclerView appDockRv;
-    RelativeLayout container;
+    TextView appDockHintTv;
+    TextView appDockAllAppsTv;
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
+
+    private Handler handler;
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -77,16 +89,6 @@ public class MainActivity extends FragmentActivity {
                 public void onFinish() {
                     // Once the service has finished loading the apps (if not already),
                     // get the list and create the adapter.
-
-                    /*
-                     * TODO: Create a new method and call it from here.
-                     * The method will get the list of most used apps from the db and populate
-                     * the app dock.
-                     *
-                     * Move all code from here into that new method.
-                     */
-
-                    apps = appsService.apps;
                     filterAndShowMostUsedApps();
                 }
             });
@@ -99,6 +101,12 @@ public class MainActivity extends FragmentActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(appsServiceConnection);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (appsService != null && apps != null) {
@@ -107,59 +115,106 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void filterAndShowMostUsedApps() {
-        // TODO: Read most used apps from the database with count
-        List<String> mostUsedAppsPackageName = new ArrayList<>();
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.launsz");
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.listr");
-        mostUsedAppsPackageName.add("com.mohammedsazid.unlockify");
-        mostUsedAppsPackageName.add("com.mohammedsazid.android.done");
+        apps = appsService.apps;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final List<AppDetail> mostUsedApps = new ArrayList<>();
+                List<AppDetail> appsFromDb = new ArrayList<>();
 
-        List<AppDetail> mostUsedApps = new ArrayList<>();
+                Cursor cursor = getContentResolver().query(
+                        Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
+                        new String[]{
+                                LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME,
+                                LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT
+                        },
+                        null,
+                        null,
+                        null
+                );
 
-        for (AppDetail app : apps) {
-            if (mostUsedAppsPackageName.contains(app.name)) {
-                mostUsedApps.add(app);
+                cursor.moveToFirst();
+                do {
+                    if (cursor != null && cursor.getCount() != 0) {
+                        AppDetail _app = new AppDetail();
+
+                        _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
+                        _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
+                        appsFromDb.add(_app);
+                    } else {
+                        if (cursor == null) {
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(MainActivity.this, "Error loading most used apps :(", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            Log.e(MainActivity.class.getSimpleName(), "Error loading most used apps.");
+                        }
+                    }
+
+                    cursor.moveToNext();
+                } while (!cursor.isAfterLast());
+
+                if (!cursor.isClosed()) {
+                    cursor.close();
+                }
+
+                if (appsFromDb.size() == 0) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Make the hint view visible if there are no most used apps
+                            appDockHintTv.setVisibility(View.VISIBLE);
+                            appDockRv.setVisibility(View.INVISIBLE);
+                        }
+                    });
+                } else {
+                    // TODO: Possible optimization point
+                    // Loop through all the apps we got from db and match those with the existing ones
+                    for (AppDetail appFromDb : appsFromDb) {
+                        for (AppDetail app : apps) {
+                            if (appFromDb.name.equals(app.name)) {
+                                app.launchCount = appFromDb.launchCount;
+                                mostUsedApps.add(app);
+                            }
+                        }
+                    }
+
+                    final AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Make the app dock visible if there is at least one used app
+                            appDockRv.setVisibility(View.VISIBLE);
+                            appDockHintTv.setVisibility(View.INVISIBLE);
+                            appDockRv.setAdapter(adapter);
+                        }
+                    });
+                }
             }
-        }
-
-        if (mostUsedApps.size() == 0) {
-            TextView tv = new TextView(MainActivity.this);
-//                        tv.setTextSize(24.0f);
-            tv.setTextColor(Color.WHITE);
-
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT
-            );
-
-            tv.setLayoutParams(params);
-            tv.setText("Your most used apps will appear here ;)");
-            tv.setGravity(Gravity.CENTER);
-
-            container.removeAllViews();
-            container.addView(tv);
-            container.requestLayout();
-        } else {
-            AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
-            appDockRv.setAdapter(adapter);
-        }
+        });
+        thread.start();
     }
 
     private void bindViews() {
-        container = (RelativeLayout) findViewById(R.id.app_dock_container);
         alphabetsFragmentContainer = (FrameLayout) findViewById(R.id.alphabets_fragment_container);
         previousTrackIv = (ImageView) findViewById(R.id.previousTrackBtn);
         playPauseIv = (ImageView) findViewById(R.id.playPauseTrackBtn);
         nextTrackIv = (ImageView) findViewById(R.id.nextTrackBtn);
         appDockRv = (RecyclerView) findViewById(R.id.app_dock_rv);
+        appDockHintTv = (TextView) findViewById(R.id.app_dock_hint_tv);
+        appDockAllAppsTv = (TextView) findViewById(R.id.app_dock_all_apps_tv);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        handler = new Handler();
 
         bindViews();
+        setListeners();
         loadAppDock();
 
         getSupportFragmentManager().beginTransaction()
@@ -173,6 +228,27 @@ public class MainActivity extends FragmentActivity {
         // Start the service to keep it running in the background
         Intent appsServiceIntent = new Intent(this, AppsService.class);
         startService(appsServiceIntent);
+
+        // TODO: Check performance here
+//        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+//            @Override
+//            public void onBackStackChanged() {
+//                loadAppDock();
+//            }
+//        });
+    }
+
+    private void setListeners() {
+        appDockAllAppsTv.setOnLongClickListener(this);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    appDockAllAppsTv.setText("ALL");
+                }
+            }
+        });
     }
 
     private void loadAppDock() {
@@ -275,6 +351,93 @@ public class MainActivity extends FragmentActivity {
             default:
                 throw new IllegalArgumentException("Please use these commands only: 'playpause', 'next', 'stop', 'previous");
         }
+    }
+
+    public void appDockAllAppsOnClick(View view) {
+        // Change the "ALL" apps to the selected letter
+        // Allow to create only 1 fragment when pressing the button
+        appDockAllAppsTv.setText("ALL");
+        view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in_bottom, R.anim.slide_out_top,
+                            R.anim.slide_in_top, R.anim.slide_out_bottom
+                    )
+                    .addToBackStack("apps_fragment")
+                    .add(R.id.alphabets_fragment_container, new AppsFragment())
+                    .commit();
+        } else {
+            getSupportFragmentManager().popBackStack();
+        }
+    }
+
+    private void showAboutDialog() {
+        new MaterialDialog.Builder(this)
+                .title("Menu")
+                .items(R.array.menu_items)
+                .itemsCallback(new MaterialDialog.ListCallback() {
+                    @Override
+                    public void onSelection(MaterialDialog materialDialog, View view, int position, CharSequence charSequence) {
+                        Intent i;
+
+                        switch (position) {
+                            case 0:
+//                                        i = new Intent(activity, SettingsActivity.class);
+//                                        activity.startActivity(i);
+                                Toast.makeText(MainActivity.this, "Under development :p", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                i = new Intent(Intent.ACTION_SET_WALLPAPER);
+                                startActivity(Intent.createChooser(i, "Select Wallpaper"));
+                                break;
+                            case 2:
+                                new MaterialDialog.Builder(MainActivity.this)
+                                        .title(getString(R.string.app_name))
+                                        .content(R.string.about_summary)
+                                        .positiveText("Email")
+                                        .positiveColor(Color.WHITE)
+                                        .callback(new MaterialDialog.ButtonCallback() {
+                                            @Override
+                                            public void onPositive(MaterialDialog dialog) {
+                                                super.onPositive(dialog);
+
+                                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                                        "mailto", "sazidozon@gmail.com", null));
+                                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + getString(R.string.app_name) + "]: ");
+                                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                                            }
+                                        })
+                                        .show();
+                                break;
+                            case 3:
+                                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                                        "mailto", "sazidozon@gmail.com", null));
+                                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + getString(R.string.app_name) + "] (FEEDBACK): ");
+                                emailIntent.putExtra(Intent.EXTRA_TEXT, "");
+                                startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        int id = v.getId();
+
+        switch (id) {
+            case R.id.app_dock_all_apps_tv:
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                showAboutDialog();
+                break;
+        }
+
+        return false;
     }
 
 }

@@ -96,11 +96,34 @@
         android:layout_below="@+id/top_bar"
         android:padding="16dp"/>
 
+    <TextView
+        android:id="@+id/app_dock_all_apps_tv"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?android:selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:hapticFeedbackEnabled="true"
+        android:longClickable="true"
+        android:onClick="appDockAllAppsOnClick"
+        android:padding="16dp"
+        android:text="ALL"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:textStyle="bold"/>
+
     <RelativeLayout
         android:id="@+id/app_dock_container"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/app_dock_all_apps_tv"
+        android:layout_toStartOf="@+id/app_dock_all_apps_tv"
         android:gravity="center"
         android:padding="4dp">
 
@@ -108,7 +131,19 @@
             android:id="@+id/app_dock_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/app_dock_hint_tv"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="Your most used apps will appear here ;)"
+            android:textColor="@color/white"
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 

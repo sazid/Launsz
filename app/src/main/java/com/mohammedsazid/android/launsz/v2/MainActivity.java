@@ -35,6 +35,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,6 +68,7 @@ public class MainActivity extends FragmentActivity {
     private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
+
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -83,14 +85,6 @@ public class MainActivity extends FragmentActivity {
                 public void onFinish() {
                     // Once the service has finished loading the apps (if not already),
                     // get the list and create the adapter.
-
-                    /*
-                     * TODO: Create a new method and call it from here.
-                     * The method will get the list of most used apps from the db and populate
-                     * the app dock.
-                     *
-                     * Move all code from here into that new method.
-                     */
 
                     apps = appsService.apps;
                     filterAndShowMostUsedApps();
@@ -113,6 +107,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void filterAndShowMostUsedApps() {
+        // TODO: Move the code to a background thread
         List<AppDetail> mostUsedApps = new ArrayList<>();
         List<AppDetail> appsFromDb = new ArrayList<>();
 
@@ -148,17 +143,7 @@ public class MainActivity extends FragmentActivity {
         if (!cursor.isClosed())
             cursor.close();
 
-        // Loop through all the apps we got from db and match those with the existing ones
-        for (AppDetail appFromDb : appsFromDb) {
-            for (AppDetail app : apps) {
-                if (appFromDb.name.equals(app.name)) {
-                    app.launchCount = appFromDb.launchCount;
-                    mostUsedApps.add(app);
-                }
-            }
-        }
-
-        if (mostUsedApps.size() == 0) {
+        if (appsFromDb.size() == 0) {
             TextView tv = new TextView(MainActivity.this);
 //                        tv.setTextSize(24.0f);
             tv.setTextColor(Color.WHITE);
@@ -176,6 +161,17 @@ public class MainActivity extends FragmentActivity {
             container.addView(tv);
             container.requestLayout();
         } else {
+            // TODO: Possible optimization point
+            // Loop through all the apps we got from db and match those with the existing ones
+            for (AppDetail appFromDb : appsFromDb) {
+                for (AppDetail app : apps) {
+                    if (appFromDb.name.equals(app.name)) {
+                        app.launchCount = appFromDb.launchCount;
+                        mostUsedApps.add(app);
+                    }
+                }
+            }
+
             AppsAdapter adapter = new AppsAdapter(MainActivity.this, mostUsedApps, true);
             appDockRv.setAdapter(adapter);
         }
@@ -209,6 +205,14 @@ public class MainActivity extends FragmentActivity {
         // Start the service to keep it running in the background
         Intent appsServiceIntent = new Intent(this, AppsService.class);
         startService(appsServiceIntent);
+
+        // TODO: Check performance here
+//        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+//            @Override
+//            public void onBackStackChanged() {
+//                loadAppDock();
+//            }
+//        });
     }
 
     private void loadAppDock() {

@@ -114,10 +114,11 @@ public class AppsService extends Service {
             ICallback callback = (ICallback) objects[0];
             PackageManager packageManager = (PackageManager) objects[1];
 
-            Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AppsService.this);
             if (preferences.getBoolean(FORCE_REFRESH, false)) {
                 NEEDS_REFRESH = true;
+            } else {
+                Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
             }
 
             if (NEEDS_REFRESH) {

@@ -126,7 +126,7 @@ public class AlphabetsFragment extends Fragment {
     }
 
     private void loadAlphabets() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
             appsService.getAppsDetails(new ICallback() {
@@ -141,12 +141,12 @@ public class AlphabetsFragment extends Fragment {
 
                     AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
                     alphabetsRv.setAdapter(adapter);
+
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean(AppsService.FORCE_REFRESH, false);
+                    editor.commit();
                 }
             }, getActivity().getPackageManager());
-
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean(AppsService.FORCE_REFRESH, false);
-            editor.commit();
         } else if (isAppsServiceBound) {
             alphabetsList = appsService.alphabetsList;
             alphabetsMap = appsService.alphabetsMap;

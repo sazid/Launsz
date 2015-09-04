@@ -28,9 +28,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.mohammedsazid.android.launsz.AppDetail;
@@ -44,9 +46,6 @@ import java.util.TreeMap;
 public class AppsService extends Service {
 
     public static final String FORCE_REFRESH = "force_refresh";
-    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
-    private static boolean NEEDS_REFRESH = true;
-
     public static List<String> alphabetsList;
     /**
      * Key - The alphabet (A, B, C, D, ...)
@@ -57,23 +56,19 @@ public class AppsService extends Service {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
-
-    private PackageManager packageManager;
-    public static List<AppDetail> apps;
-
+    public static List<AppDetail> apps = new ArrayList<>();
+    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
+    private static boolean NEEDS_REFRESH = true;
     private final IBinder appsServiceBinder = new AppsServiceBinder();
 
     public AppsService() {
     }
 
-//    public void doRefresh() {
-//        NEEDS_REFRESH = true;
-//        loadAppsDetails();
-//    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        loadAppsDetails();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(AppsService.this).edit();
+        editor.putBoolean(FORCE_REFRESH, true);
+        editor.commit();
 
         return START_STICKY;
     }
@@ -83,52 +78,8 @@ public class AppsService extends Service {
         return appsServiceBinder;
     }
 
-    public void loadAppsDetails() {
-        Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (preferences.getBoolean(FORCE_REFRESH, false)) {
-            NEEDS_REFRESH = true;
-        }
-
-        packageManager = getPackageManager();
-
-        if (NEEDS_REFRESH) {
-            Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
-            apps = new ArrayList<>();
-            alphabetsMap = new TreeMap<>();
-            alphabetsList = new ArrayList<>();
-
-            alphabetsList.addAll(Arrays.asList(alphabets));
-
-            for (int i = 0; i < alphabetsList.size(); i++) {
-                alphabetsMap.put(alphabetsList.get(i), 0);
-            }
-
-            Intent i = new Intent(Intent.ACTION_MAIN, null);
-            i.addCategory(Intent.CATEGORY_LAUNCHER);
-
-            List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
-
-            for (ResolveInfo ri : availableActivities) {
-                AppDetail app = new AppDetail();
-
-                app.label = ri.loadLabel(packageManager);
-                app.name = ri.activityInfo.packageName;
-                app.icon = ri.activityInfo.loadIcon(packageManager);
-
-                apps.add(app);
-
-                // TODO: Add accented alphabets comparison here
-                String initial = String.valueOf(app.label.toString().trim().toUpperCase().charAt(0));
-                if (alphabetsMap.containsKey(initial)) {
-                    alphabetsMap.put(initial, alphabetsMap.get(initial) + 1);
-                }
-            }
-
-            java.util.Collections.sort(apps);
-
-            NEEDS_REFRESH = false;
-        }
+    public void loadAppsInfoInBackground(ICallback callback, PackageManager packageManager) {
+        new DownloadFilesTask().execute(callback, packageManager);
     }
 
     public List<AppDetail> filterApps(String filter) {
@@ -146,17 +97,73 @@ public class AppsService extends Service {
         return filteredApps;
     }
 
-    public void getAppsDetails(ICallback iCallback) {
+    public void getAppsDetails(ICallback iCallback, @Nullable PackageManager packageManager) {
         iCallback.onStart();
 
-        loadAppsDetails();
-
-        iCallback.onFinish();
+        loadAppsInfoInBackground(iCallback, packageManager);
     }
 
     public class AppsServiceBinder extends Binder {
         AppsService getService() {
             return AppsService.this;
+        }
+    }
+
+    private class DownloadFilesTask extends AsyncTask<Object, Integer, ICallback> {
+        protected ICallback doInBackground(Object... objects) {
+            ICallback callback = (ICallback) objects[0];
+            PackageManager packageManager = (PackageManager) objects[1];
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(AppsService.this);
+            if (preferences.getBoolean(FORCE_REFRESH, false)) {
+                NEEDS_REFRESH = true;
+            } else {
+                Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
+            }
+
+            if (NEEDS_REFRESH) {
+                Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
+                apps = new ArrayList<>();
+                alphabetsMap = new TreeMap<>();
+                alphabetsList = new ArrayList<>();
+
+                alphabetsList.addAll(Arrays.asList(alphabets));
+
+                for (int i = 0; i < alphabetsList.size(); i++) {
+                    alphabetsMap.put(alphabetsList.get(i), 0);
+                }
+
+                Intent i = new Intent(Intent.ACTION_MAIN, null);
+                i.addCategory(Intent.CATEGORY_LAUNCHER);
+
+                List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
+
+                for (ResolveInfo ri : availableActivities) {
+                    AppDetail app = new AppDetail();
+
+                    app.label = ri.loadLabel(packageManager);
+                    app.name = ri.activityInfo.packageName;
+                    app.icon = ri.activityInfo.loadIcon(packageManager);
+
+                    apps.add(app);
+
+                    // TODO: Add accented alphabets comparison here
+                    String initial = String.valueOf(app.label.toString().trim().toUpperCase().charAt(0));
+                    if (alphabetsMap.containsKey(initial)) {
+                        alphabetsMap.put(initial, alphabetsMap.get(initial) + 1);
+                    }
+                }
+
+                java.util.Collections.sort(apps);
+
+                NEEDS_REFRESH = false;
+            }
+
+            return callback;
+        }
+
+        protected void onPostExecute(ICallback callback) {
+            callback.onFinish();
         }
     }
 

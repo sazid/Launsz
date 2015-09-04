@@ -36,6 +36,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,13 +68,10 @@ public class AlphabetsFragment extends Fragment {
 
                 @Override
                 public void onFinish() {
-                    alphabetsList = appsService.alphabetsList;
-                    alphabetsMap = appsService.alphabetsMap;
-
-                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
-                    alphabetsRv.setAdapter(adapter);
+                    Log.d("ServiceConnection", "Inside srevice connection");
+                    loadAlphabets();
                 }
-            });
+            }, getActivity().getPackageManager());
         }
 
         @Override
@@ -106,29 +104,8 @@ public class AlphabetsFragment extends Fragment {
         getActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0 && appsService != null) {
-                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-                    if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
-                        appsService.getAppsDetails(new ICallback() {
-                            @Override
-                            public void onStart() {
-                            }
-
-                            @Override
-                            public void onFinish() {
-                                alphabetsList = appsService.alphabetsList;
-                                alphabetsMap = appsService.alphabetsMap;
-
-                                AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
-                                alphabetsRv.setAdapter(adapter);
-                            }
-                        });
-
-                        SharedPreferences.Editor editor = pref.edit();
-                        editor.putBoolean(AppsService.FORCE_REFRESH, false);
-                        editor.commit();
-                    }
+                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    loadAlphabets();
                 }
             }
         });
@@ -148,10 +125,8 @@ public class AlphabetsFragment extends Fragment {
         loadAppsList();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    private void loadAlphabets() {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
             appsService.getAppsDetails(new ICallback() {
@@ -166,27 +141,30 @@ public class AlphabetsFragment extends Fragment {
 
                     AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
                     alphabetsRv.setAdapter(adapter);
-                }
-            });
 
-            SharedPreferences.Editor editor = pref.edit();
-            editor.putBoolean(AppsService.FORCE_REFRESH, false);
-            editor.commit();
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean(AppsService.FORCE_REFRESH, false);
+                    editor.commit();
+                }
+            }, getActivity().getPackageManager());
+        } else if (isAppsServiceBound) {
+            alphabetsList = appsService.alphabetsList;
+            alphabetsMap = appsService.alphabetsMap;
+
+            AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+            alphabetsRv.setAdapter(adapter);
         }
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-//        getActivity().unbindService(appsServiceConnection);
+    public void onResume() {
+        super.onResume();
+        loadAlphabets();
     }
 
     private void loadAppsList() {
         // Bind to the service
         Intent serviceIntent = new Intent(getActivity(), AppsService.class);
-
-        // Start the service if it's not already running
-//        getActivity().startService(serviceIntent);
         getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 

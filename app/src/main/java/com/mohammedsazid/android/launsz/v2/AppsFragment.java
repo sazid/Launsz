@@ -27,9 +27,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -71,6 +73,33 @@ public class AppsFragment extends Fragment {
                 public void onFinish() {
                     // Once the service has finished loading the apps (if not already),
                     // get the list and create the adapter.
+                    loadAppsInfo(filterStr);
+                }
+            }, getActivity().getPackageManager());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isAppsServiceBound = false;
+        }
+    };
+
+    public AppsFragment() {
+    }
+
+    private void loadAppsInfo(@Nullable final String filterStr) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
+            appsService.getAppsDetails(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    // Once the service has finished loading the apps (if not already),
+                    // get the list and create the adapter.
 
                     if (filterStr != null && !filterStr.isEmpty()) {
                         apps = appsService.filterApps(filterStr);
@@ -99,31 +128,27 @@ public class AppsFragment extends Fragment {
                         appsRv.setAdapter(adapter);
                     }
                 }
-            });
-        }
+            }, getActivity().getPackageManager());
+        } else if (isAppsServiceBound) {
+            if (appsService != null) {
+                apps = appsService.filterApps(filterStr);
+            } else {
+                apps = appsService.apps;
+            }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isAppsServiceBound = false;
+            if (apps != null && apps.size() == 0) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            } else {
+                AppsAdapter adapter = new AppsAdapter(getActivity(), apps, false);
+                appsRv.setAdapter(adapter);
+            }
         }
-    };
-
-    public AppsFragment() {
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        if (appsRv != null && appsService != null) {
-            appsService.loadAppsDetails();
-            apps = appsService.filterApps(filterStr);
-            appsRv.setAdapter(new AppsAdapter(getActivity(), apps, false));
-        }
-
-        if (apps != null && apps.size() == 0) {
-            getActivity().getSupportFragmentManager().popBackStack();
-        }
+        loadAppsInfo(filterStr);
     }
 
     private void bindViews(View rootView) {

@@ -41,15 +41,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 public class AppsService extends Service {
 
     public static final String FORCE_REFRESH = "force_refresh";
-    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
-    private static boolean NEEDS_REFRESH = true;
-
     public static List<String> alphabetsList;
     /**
      * Key - The alphabet (A, B, C, D, ...)
@@ -60,10 +56,9 @@ public class AppsService extends Service {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
-
-    private PackageManager packageManager;
     public static List<AppDetail> apps = new ArrayList<>();
-
+    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
+    private static boolean NEEDS_REFRESH = true;
     private final IBinder appsServiceBinder = new AppsServiceBinder();
 
     public AppsService() {
@@ -71,8 +66,6 @@ public class AppsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        loadAppsDetails();
-
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(AppsService.this).edit();
         editor.putBoolean(FORCE_REFRESH, true);
         editor.commit();
@@ -83,54 +76,6 @@ public class AppsService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return appsServiceBinder;
-    }
-
-    public void loadAppsDetails() {
-        Log.d(AppsService.class.getSimpleName(), "Doing a refresh");
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (preferences.getBoolean(FORCE_REFRESH, false)) {
-            NEEDS_REFRESH = true;
-        }
-
-        packageManager = getPackageManager();
-
-        if (NEEDS_REFRESH) {
-            Log.d(AppsService.class.getSimpleName(), "Doing a force refresh");
-            apps = new ArrayList<>();
-            alphabetsMap = new TreeMap<>();
-            alphabetsList = new ArrayList<>();
-
-            alphabetsList.addAll(Arrays.asList(alphabets));
-
-            for (int i = 0; i < alphabetsList.size(); i++) {
-                alphabetsMap.put(alphabetsList.get(i), 0);
-            }
-
-            Intent i = new Intent(Intent.ACTION_MAIN, null);
-            i.addCategory(Intent.CATEGORY_LAUNCHER);
-
-            List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
-
-            for (ResolveInfo ri : availableActivities) {
-                AppDetail app = new AppDetail();
-
-                app.label = ri.loadLabel(packageManager);
-                app.name = ri.activityInfo.packageName;
-                app.icon = ri.activityInfo.loadIcon(packageManager);
-
-                apps.add(app);
-
-                // TODO: Add accented alphabets comparison here
-                String initial = String.valueOf(app.label.toString().trim().toUpperCase().charAt(0));
-                if (alphabetsMap.containsKey(initial)) {
-                    alphabetsMap.put(initial, alphabetsMap.get(initial) + 1);
-                }
-            }
-
-            java.util.Collections.sort(apps);
-
-            NEEDS_REFRESH = false;
-        }
     }
 
     public void loadAppsInfoInBackground(ICallback callback, PackageManager packageManager) {
@@ -155,11 +100,7 @@ public class AppsService extends Service {
     public void getAppsDetails(ICallback iCallback, @Nullable PackageManager packageManager) {
         iCallback.onStart();
 
-        if (packageManager != null) {
-            loadAppsInfoInBackground(iCallback, packageManager);
-        } else {
-            loadAppsDetails();
-        }
+        loadAppsInfoInBackground(iCallback, packageManager);
     }
 
     public class AppsServiceBinder extends Binder {

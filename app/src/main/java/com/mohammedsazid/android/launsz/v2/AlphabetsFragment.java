@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.R;
 
@@ -50,6 +51,7 @@ public class AlphabetsFragment extends Fragment {
 
     boolean isAppsServiceBound = false;
     RecyclerView alphabetsRv;
+    TextView loadingTv;
     private AppsService appsService;
     private List<String> alphabetsList;
     private Map<String, Integer> alphabetsMap;
@@ -85,6 +87,7 @@ public class AlphabetsFragment extends Fragment {
 
     private void bindViews(View rootView) {
         alphabetsRv = (RecyclerView) rootView.findViewById(R.id.alphabets_rv);
+        loadingTv = (TextView) rootView.findViewById(R.id.alphabets_loading_text);
     }
 
     @Override
@@ -136,6 +139,9 @@ public class AlphabetsFragment extends Fragment {
 
                 @Override
                 public void onFinish() {
+                    loadingTv.setVisibility(View.INVISIBLE);
+                    alphabetsRv.setVisibility(View.VISIBLE);
+
                     alphabetsList = appsService.alphabetsList;
                     alphabetsMap = appsService.alphabetsMap;
 
@@ -148,6 +154,9 @@ public class AlphabetsFragment extends Fragment {
                 }
             }, getActivity().getPackageManager());
         } else if (isAppsServiceBound) {
+            loadingTv.setVisibility(View.INVISIBLE);
+            alphabetsRv.setVisibility(View.VISIBLE);
+
             alphabetsList = appsService.alphabetsList;
             alphabetsMap = appsService.alphabetsMap;
 

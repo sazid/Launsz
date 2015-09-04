@@ -46,4 +46,5 @@
     <string name="previous_track"><![CDATA[<]]></string>
     <string name="play_pause_track"><![CDATA[<>]]></string>
     <string name="next_track"><![CDATA[>]]></string>
+    <string name="loading">Loading…</string>
 </resources>

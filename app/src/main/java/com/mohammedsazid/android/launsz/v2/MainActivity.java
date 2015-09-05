@@ -68,7 +68,6 @@ public class MainActivity extends FragmentActivity
     RecyclerView appDockRv;
     TextView appDockHintTv;
     TextView appDockAllAppsTv;
-    private List<AppDetail> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound = false;
 
@@ -109,14 +108,13 @@ public class MainActivity extends FragmentActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (appsService != null && apps != null) {
+        if (appsService != null && appsService.apps != null) {
             filterAndShowMostUsedApps();
         }
     }
 
     private void filterAndShowMostUsedApps() {
         if (isAppsServiceBound) {
-            apps = appsService.apps;
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -174,7 +172,7 @@ public class MainActivity extends FragmentActivity
                         // TODO: Possible optimization point
                         // Loop through all the apps we got from db and match those with the existing ones
                         for (AppDetail appFromDb : appsFromDb) {
-                            for (AppDetail app : apps) {
+                            for (AppDetail app : appsService.apps) {
                                 if (appFromDb.name.equals(app.name)) {
                                     app.launchCount = appFromDb.launchCount;
                                     mostUsedApps.add(app);

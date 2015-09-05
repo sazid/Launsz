@@ -83,16 +83,17 @@ public class AppsService extends Service {
     }
 
     public List<AppDetail> filterApps(String filter) {
-        List<AppDetail> filteredApps = new ArrayList<>();
 
+        if (filter == null || filter.equals("*")) {
+            return apps;
+        }
+
+        List<AppDetail> filteredApps = new ArrayList<>();
         for (AppDetail app : apps) {
-            if (filter == null || filter.equals("*")) {
-                filteredApps.add(app);
-            } else if (app.label.toString().trim().toUpperCase().startsWith(filter.toUpperCase())) {
+            if (app.label.toString().trim().toUpperCase().startsWith(filter.toUpperCase())) {
                 filteredApps.add(app);
             }
         }
-
         java.util.Collections.sort(filteredApps);
         return filteredApps;
     }

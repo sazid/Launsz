@@ -44,17 +44,12 @@ import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.R;
 
-import java.util.List;
-import java.util.Map;
-
 public class AlphabetsFragment extends Fragment {
 
     boolean isAppsServiceBound = false;
     RecyclerView alphabetsRv;
     TextView loadingTv;
     private AppsService appsService;
-    private List<String> alphabetsList;
-    private Map<String, Integer> alphabetsMap;
     // Every service needs to be bound through a ServiceConnection object
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
@@ -142,10 +137,7 @@ public class AlphabetsFragment extends Fragment {
                     loadingTv.setVisibility(View.INVISIBLE);
                     alphabetsRv.setVisibility(View.VISIBLE);
 
-                    alphabetsList = appsService.alphabetsList;
-                    alphabetsMap = appsService.alphabetsMap;
-
-                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), appsService.alphabetsMap, appsService.alphabetsList);
                     alphabetsRv.setAdapter(adapter);
 
                     SharedPreferences.Editor editor = pref.edit();
@@ -157,10 +149,7 @@ public class AlphabetsFragment extends Fragment {
             loadingTv.setVisibility(View.INVISIBLE);
             alphabetsRv.setVisibility(View.VISIBLE);
 
-            alphabetsList = appsService.alphabetsList;
-            alphabetsMap = appsService.alphabetsMap;
-
-            AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsMap, alphabetsList);
+            AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), appsService.alphabetsMap, appsService.alphabetsList);
             alphabetsRv.setAdapter(adapter);
         }
     }

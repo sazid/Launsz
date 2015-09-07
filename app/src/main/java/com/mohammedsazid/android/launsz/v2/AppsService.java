@@ -94,7 +94,9 @@ public class AppsService extends Service {
                 filteredApps.add(app);
             }
         }
-        java.util.Collections.sort(filteredApps);
+
+        // No need to sort the apps since they are already sorted and looped accordingly
+//        java.util.Collections.sort(filteredApps);
         return filteredApps;
     }
 

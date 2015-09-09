@@ -23,7 +23,6 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,7 +37,6 @@ import android.widget.TextView;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
-import java.util.Map;
 
 public class AlphabetsAdapter extends RecyclerView.Adapter {
 
@@ -49,11 +47,11 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     private static final int ALPHABET_TYPE = 0;
     FragmentActivity activity;
     List<String> alphabetsList;
-    private Map<String, Integer> alphabetsMap;
+//    private Map<String, Integer> alphabetsMap;
 
-    public AlphabetsAdapter(FragmentActivity activity, Map<String, Integer> alphabetsMap, List<String> alphabetsList) {
+    public AlphabetsAdapter(FragmentActivity activity, List<String> alphabetsList) {
         this.activity = activity;
-        this.alphabetsMap = alphabetsMap;
+//        this.alphabetsMap = alphabetsMap;
         this.alphabetsList = alphabetsList;
     }
 
@@ -74,44 +72,36 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
 //                final int posForAlphabets = position - 1;
                 final String alphabet = alphabetsList.get(position);
                 viewHolder.alphabetTv.setText(alphabet);
-                final boolean isDisabled = alphabetsMap.get(alphabet) <= 0;
+//                final boolean isDisabled = alphabetsMap.get(alphabet) <= 0;
 
                 // If there's no app starting with a given alphabet, disable that alphabet
-                if (isDisabled) {
-                    viewHolder.itemView.setClickable(false);
-                    viewHolder.itemView.setFocusable(false);
-
-                    // Change the color based on user preference
-                    viewHolder.alphabetTv.setTextColor(Color.DKGRAY);
-                } else {
-                    onClickListener = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (hapticFeedbackEnabled) {
-                                viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-                            }
-
-                            Bundle bundle = new Bundle();
-                            bundle.putString(ALPHABET_CHARACTER, alphabet);
-                            Fragment fragment = new AppsFragment();
-                            fragment.setArguments(bundle);
-
-                            activity.getSupportFragmentManager().beginTransaction()
-                                    .setCustomAnimations(
-                                            R.anim.slide_in_bottom, R.anim.slide_out_top,
-                                            R.anim.slide_in_top, R.anim.slide_out_bottom
-                                    )
-                                    .addToBackStack("apps_fragment")
-                                    .add(R.id.alphabets_fragment_container, fragment)
-                                    .commit();
-
-                            TextView appDockAllAppsTv = (TextView) activity.findViewById(R.id.app_dock_all_apps_tv);
-                            appDockAllAppsTv.setText(alphabet);
+                onClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (hapticFeedbackEnabled) {
+                            viewHolder.itemView.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                         }
-                    };
 
-                    viewHolder.itemView.setOnClickListener(onClickListener);
-                }
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ALPHABET_CHARACTER, alphabet);
+                        Fragment fragment = new AppsFragment();
+                        fragment.setArguments(bundle);
+
+                        activity.getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in_bottom, R.anim.slide_out_top,
+                                        R.anim.slide_in_top, R.anim.slide_out_bottom
+                                )
+                                .addToBackStack("apps_fragment")
+                                .add(R.id.alphabets_fragment_container, fragment)
+                                .commit();
+
+                        TextView appDockAllAppsTv = (TextView) activity.findViewById(R.id.app_dock_all_apps_tv);
+                        appDockAllAppsTv.setText(alphabet);
+                    }
+                };
+
+                viewHolder.itemView.setOnClickListener(onClickListener);
                 break;
 //            case MENU_TYPE:
 //                viewHolder.iconIv.setImageResource(R.drawable.ic_settings_white);
@@ -203,7 +193,7 @@ public class AlphabetsAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         // For every another type of view add it to the original size
         // 0 icon types are added to existing list of alphabets
-        return alphabetsMap.size();
+        return alphabetsList.size();
     }
 
     @Override

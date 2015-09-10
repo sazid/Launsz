@@ -29,16 +29,17 @@
         android:id="@+id/alphabets_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:visibility="invisible"/>
 
-    <!--<TextView-->
-        <!--android:id="@+id/alphabets_loading_text"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:gravity="center"-->
-        <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:text="@string/loading"-->
-        <!--android:layout_centerInParent="true"/>-->
+    <TextView
+        android:id="@+id/alphabets_loading_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:text="@string/loading"
+        android:layout_centerInParent="true"/>
 
 </RelativeLayout>

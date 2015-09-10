@@ -23,11 +23,20 @@
 
 package com.mohammedsazid.android.launsz.v2;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,29 +44,51 @@ import android.widget.TextView;
 
 import com.mohammedsazid.android.launsz.R;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class AlphabetsFragment extends Fragment {
 
     boolean isAppsServiceBound = false;
     RecyclerView alphabetsRv;
-//    TextView loadingTv;
+    TextView loadingTv;
     private AppsService appsService;
-
     // Every service needs to be bound through a ServiceConnection object
+    private ServiceConnection appsServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            AppsService.AppsServiceBinder binder = (AppsService.AppsServiceBinder) service;
+            appsService = binder.getService();
+            isAppsServiceBound = true;
+
+            appsService.getAppsDetails(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    Log.d("ServiceConnection", "Inside srevice connection");
+                    loadAlphabets();
+                }
+            }, getActivity().getPackageManager());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isAppsServiceBound = false;
+        }
+    };
+
     public AlphabetsFragment() {
     }
 
     private void bindViews(View rootView) {
         alphabetsRv = (RecyclerView) rootView.findViewById(R.id.alphabets_rv);
-//        loadingTv = (TextView) rootView.findViewById(R.id.alphabets_loading_text);
+        loadingTv = (TextView) rootView.findViewById(R.id.alphabets_loading_text);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        getActivity().unbindService(appsServiceConnection);
     }
 
     @Nullable
@@ -68,26 +99,71 @@ public class AlphabetsFragment extends Fragment {
         bindViews(view);
         loadGridView();
 
+        getActivity().getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                    loadAlphabets();
+                }
+            }
+        });
+
         return view;
     }
 
     private void loadGridView() {
         // Set the layout manager and other stuffs
-        List<String> alphabetsList = new ArrayList<>();
-        alphabetsList.addAll(Arrays.asList(appsService.alphabets));
-        AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), alphabetsList);
-        alphabetsRv.setAdapter(adapter);
         alphabetsRv.setLayoutManager(new GridLayoutManager(
                 getActivity(),
                 4,
                 GridLayoutManager.VERTICAL,
                 false));
         alphabetsRv.setHasFixedSize(true);
+
+        loadAppsList();
+    }
+
+    private void loadAlphabets() {
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        if (appsService != null && pref.getBoolean(AppsService.FORCE_REFRESH, false)) {
+            appsService.getAppsDetails(new ICallback() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onFinish() {
+                    loadingTv.setVisibility(View.INVISIBLE);
+                    alphabetsRv.setVisibility(View.VISIBLE);
+
+                    AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), appsService.alphabetsMap, appsService.alphabetsList);
+                    alphabetsRv.setAdapter(adapter);
+
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean(AppsService.FORCE_REFRESH, false);
+                    editor.commit();
+                }
+            }, getActivity().getPackageManager());
+        } else if (isAppsServiceBound) {
+            loadingTv.setVisibility(View.INVISIBLE);
+            alphabetsRv.setVisibility(View.VISIBLE);
+
+            AlphabetsAdapter adapter = new AlphabetsAdapter(getActivity(), appsService.alphabetsMap, appsService.alphabetsList);
+            alphabetsRv.setAdapter(adapter);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        loadAlphabets();
+    }
+
+    private void loadAppsList() {
+        // Bind to the service
+        Intent serviceIntent = new Intent(getActivity(), AppsService.class);
+        getActivity().bindService(serviceIntent, appsServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
 }

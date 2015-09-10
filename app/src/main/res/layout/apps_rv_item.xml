@@ -32,13 +32,13 @@
 
     <ImageView
         android:id="@+id/apps_rv_item_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@android:dimen/app_icon_size"
+        android:layout_height="@android:dimen/app_icon_size"
         android:layout_gravity="center_horizontal"
         android:maxHeight="64dp"
         android:maxWidth="64dp"
         android:scaleType="fitXY"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_default_app" />
 
     <TextView
         android:id="@+id/apps_rv_item_label"

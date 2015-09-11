@@ -38,6 +38,6 @@
         android:maxHeight="64dp"
         android:maxWidth="64dp"
         android:scaleType="fitXY"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@mipmap/ic_default_app"/>
 
 </RelativeLayout>

@@ -62,7 +62,10 @@ public class AppsAdapter extends RecyclerView.Adapter {
 
         path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
 //        Log.d(AppsAdapter.class.getSimpleName(), path.toString());
-        Glide.with(activity).load(path.toString()).into(viewHolder.appIconIv);
+        Glide.with(activity)
+                .load(path.toString())
+                .placeholder(R.mipmap.ic_default_app)
+                .into(viewHolder.appIconIv);
 
         if (!appDock) {
             if (app.name.toString().equals(activity.getApplicationContext().getPackageName())) {

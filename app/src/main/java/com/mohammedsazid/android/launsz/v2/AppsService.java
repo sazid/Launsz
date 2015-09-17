@@ -47,18 +47,17 @@ import java.util.TreeMap;
 public class AppsService extends Service {
 
     public static final String FORCE_REFRESH = "force_refresh";
-    public static List<String> alphabetsList;
+    public static String[] alphabets = new String[]{
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    };
     /**
      * Key - The alphabet (A, B, C, D, ...)
      * Value - Number of apps in that alphabet
      */
     public static Map<String, Integer> alphabetsMap;
-    public static String[] alphabets = new String[]{
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    };
+    public static List<String> alphabetsList;
     public static List<AppInfo> apps = new ArrayList<>();
-    // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
     private static boolean NEEDS_REFRESH = true;
     private final IBinder appsServiceBinder = new AppsServiceBinder();
 
@@ -67,9 +66,9 @@ public class AppsService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(AppsService.this).edit();
-        editor.putBoolean(FORCE_REFRESH, true);
-        editor.commit();
+//        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(AppsService.this).edit();
+//        editor.putBoolean(FORCE_REFRESH, true);
+//        editor.commit();
 
         return START_STICKY;
     }

@@ -65,7 +65,6 @@ public class AlphabetsFragment extends Fragment {
 
                 @Override
                 public void onFinish() {
-                    Log.d("ServiceConnection", "Inside srevice connection");
                     loadAlphabets();
                 }
             }, getActivity().getPackageManager());

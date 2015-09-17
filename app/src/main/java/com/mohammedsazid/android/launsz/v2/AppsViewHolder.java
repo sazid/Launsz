@@ -10,12 +10,13 @@ import com.mohammedsazid.android.launsz.R;
 /**
  * The ViewHolder for the Alphabets
  */
-class AlphabetsViewHolder extends RecyclerView.ViewHolder {
+class AppsViewHolder extends RecyclerView.ViewHolder {
+    AppsAdapter.AsyncImageLoaderTask imageLoaderTask;
     protected int viewType;
     TextView appLabelTv;
     ImageView appIconIv;
 
-    public AlphabetsViewHolder(View itemView, int viewType) {
+    public AppsViewHolder(View itemView, int viewType) {
         super(itemView);
 
         this.viewType = viewType;

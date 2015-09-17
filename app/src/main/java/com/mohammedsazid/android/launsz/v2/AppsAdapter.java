@@ -24,18 +24,22 @@
 package com.mohammedsazid.android.launsz.v2;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.mohammedsazid.android.launsz.AppInfo;
+import com.mohammedsazid.android.launsz.HelperClass;
 import com.mohammedsazid.android.launsz.R;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
 import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
@@ -56,16 +60,37 @@ public class AppsAdapter extends RecyclerView.Adapter {
     }
 
     @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        AppsViewHolder viewHolder = (AppsViewHolder) holder;
+
+        // Cancel any ongoing image loading process and start a new one
+        if (viewHolder.imageLoaderTask != null) viewHolder.imageLoaderTask.cancel(true);
+    }
+
+    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
+        AppsViewHolder viewHolder = (AppsViewHolder) holder;
         final AppInfo app = apps.get(position);
 
-        path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
+//        path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
 //        Log.d(AppsAdapter.class.getSimpleName(), path.toString());
-        Glide.with(activity)
-                .load(path.toString())
-                .placeholder(R.mipmap.ic_default_app)
-                .into(viewHolder.appIconIv);
+//        Glide.with(activity)
+//                .load(path.toString())
+//                .placeholder(R.mipmap.ic_default_app)
+//                .into(viewHolder.appIconIv);
+
+        viewHolder.imageLoaderTask = new AsyncImageLoaderTask(
+                activity, viewHolder.appIconIv, 40, 40
+        );
+        viewHolder.imageLoaderTask.execute(app);
+
+//        viewHolder.appIconIv.setImageBitmap(HelperClass.getIconFromDisk(
+//                activity,
+//                app.name.toString(),
+//                true,
+//                viewHolder.appIconIv.getWidth(),
+//                viewHolder.appIconIv.getHeight()
+//        ));
 
         if (!appDock) {
             if (app.name.toString().equals(activity.getApplicationContext().getPackageName())) {
@@ -160,7 +185,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
         View view;
         int layoutResource = appDock ? R.layout.appdock_rv_item : R.layout.apps_rv_item;
         view = LayoutInflater.from(parent.getContext()).inflate(layoutResource, parent, false);
-        return new AlphabetsViewHolder(view, viewType);
+        return new AppsViewHolder(view, viewType);
     }
 
     @Override
@@ -169,4 +194,45 @@ public class AppsAdapter extends RecyclerView.Adapter {
         return apps.size();
     }
 
+    static class AsyncImageLoaderTask extends AsyncTask<Object, Void, Bitmap> {
+        Context context;
+        ImageView imageView;
+        AppInfo appInfo;
+        int reqWidth;
+        int reqHeight;
+
+        public AsyncImageLoaderTask(
+                Context context, ImageView imageView, int reqWidth, int reqHeight) {
+            this.context = context;
+            this.imageView = imageView;
+            this.reqWidth = reqWidth;
+            this.reqHeight = reqHeight;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // Show the placeholder icon while loading
+            if (imageView != null) imageView.setImageResource(R.mipmap.ic_default_app);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            imageView.setImageBitmap(bitmap);
+        }
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+            appInfo = (AppInfo) params[0];
+
+            Bitmap bitmap = HelperClass.getIconFromDisk(
+                    context,
+                    appInfo.name.toString(),
+                    true,
+                    reqWidth,
+                    reqHeight
+            );
+
+            return bitmap;
+        }
+    }
 }

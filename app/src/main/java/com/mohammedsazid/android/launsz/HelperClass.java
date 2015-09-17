@@ -43,6 +43,7 @@ public class HelperClass {
 
     /**
      * Save the given bitmap into the disk
+     *
      * @param context
      * @param fileName
      * @param icon
@@ -54,6 +55,7 @@ public class HelperClass {
                 resourceFile = context.openFileOutput(fileName, Context.MODE_PRIVATE);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 // save the file with 75% compression
+                // NOTE: compression does not affect png
                 if (icon.compress(Bitmap.CompressFormat.PNG, 75, os)) {
                     byte[] buffer = os.toByteArray();
                     resourceFile.write(buffer);
@@ -75,6 +77,7 @@ public class HelperClass {
 
     /**
      * Saves a given drawable as Bitmap into the disk
+     *
      * @param context
      * @param fileName
      * @param iconDrawable
@@ -87,11 +90,15 @@ public class HelperClass {
 
     /**
      * Gets the icon from the disk and returns a bitmap of it
-     * @param context
-     * @param fileName
-     * @return
+     *
+     * @param context        Context
+     * @param fileName       Name of the file to decode the bitmap from
+     * @param useSubsampling Whether to use sub sampling or not
+     * @return Bitmap
      */
-    public static Bitmap getIconFromDisk(Context context, String fileName) {
+    public static Bitmap getIconFromDisk(
+            Context context, String fileName,
+            final boolean useSubsampling, int reqWidth, int reqHeight) {
         FileInputStream resourceFile = null;
         Bitmap bitmap = null;
         try {
@@ -104,7 +111,20 @@ public class HelperClass {
                 bytesRead = resourceFile.read(buffer, 0, buffer.length);
             }
 
-            bitmap = BitmapFactory.decodeByteArray(bytes.toByteArray(), 0, bytes.size());
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            if (useSubsampling) {
+                // First decode using inJustDecodeBounds=true to check dimensions
+                options.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(bytes.toByteArray(), 0, bytes.size(), options);
+
+                // Calculate inSampleSize
+                options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+                options.inJustDecodeBounds = false;
+            }
+
+//            Log.d(HelperClass.class.getSimpleName(), "Bytes read: " + bytes.size());
+            bitmap = BitmapFactory.decodeByteArray(bytes.toByteArray(), 0, bytes.size(), options);
             if (bitmap == null)
                 Log.e(HelperClass.class.getSimpleName(), "Failed to decode the icon");
         } catch (IOException e) {
@@ -120,6 +140,27 @@ public class HelperClass {
         }
 
         return bitmap;
+    }
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of the image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize that is a power of 2 and keeps both height
+            // and width larger than the requested width and height.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     public static void dimBackground(Activity activity, SharedPreferences sharedPrefs) {

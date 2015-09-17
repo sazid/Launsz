@@ -63,9 +63,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
     @Override
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         AppsViewHolder viewHolder = (AppsViewHolder) holder;
-
-        // Cancel any ongoing image loading process and start a new one
-        if (viewHolder.imageLoaderTask != null) viewHolder.imageLoaderTask.cancel(true);
+        Glide.clear(viewHolder.appIconIv);
     }
 
     @Override

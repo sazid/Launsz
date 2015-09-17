@@ -56,6 +56,7 @@ public class AppsFragment extends Fragment {
     private AppsService appsService;
     private boolean isAppsServiceBound;
     private RelativeLayout container;
+    private GridLayoutManager layoutManager;
 
     private ServiceConnection appsServiceConnection = new ServiceConnection() {
         @Override
@@ -181,12 +182,14 @@ public class AppsFragment extends Fragment {
     }
 
     private void loadApps() {
-        appsRv.setHasFixedSize(true);
-        appsRv.setLayoutManager(new GridLayoutManager(
+        layoutManager = new GridLayoutManager(
                 getActivity(),              // context
                 4,                          // span count
                 GridLayoutManager.VERTICAL, // orientation
-                false));                    // reverse layout
+                false
+        );
+        appsRv.setLayoutManager(layoutManager);
+        appsRv.setHasFixedSize(true);
 
         // Bind to the service
         Intent serviceIntent = new Intent(getActivity(), AppsService.class);

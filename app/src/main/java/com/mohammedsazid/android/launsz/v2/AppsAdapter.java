@@ -32,13 +32,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.mohammedsazid.android.launsz.AppDetail;
 import com.mohammedsazid.android.launsz.R;
-import com.mohammedsazid.android.launsz.SettingsActivity;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
 import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
 
@@ -48,6 +46,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
 
     FragmentActivity activity;
     boolean appDock = false;
+    Uri path;
     private List<AppDetail> apps;
 
     public AppsAdapter(FragmentActivity activity, List<AppDetail> apps, boolean appDock) {
@@ -61,7 +60,10 @@ public class AppsAdapter extends RecyclerView.Adapter {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
         final AppDetail app = apps.get(position);
 
-        viewHolder.appIconIv.setImageDrawable(app.icon);
+        path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
+//        Log.d(AppsAdapter.class.getSimpleName(), path.toString());
+        Glide.with(activity).load(path.toString()).into(viewHolder.appIconIv);
+
         if (!appDock) {
             if (app.name.toString().equals(activity.getApplicationContext().getPackageName())) {
                 viewHolder.appLabelTv.setText(activity.getString(R.string.title_activity_settings));
@@ -153,11 +155,8 @@ public class AppsAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-
         int layoutResource = appDock ? R.layout.appdock_rv_item : R.layout.apps_rv_item;
-
         view = LayoutInflater.from(parent.getContext()).inflate(layoutResource, parent, false);
-
         return new AlphabetsViewHolder(view, viewType);
     }
 
@@ -165,24 +164,6 @@ public class AppsAdapter extends RecyclerView.Adapter {
     public int getItemCount() {
         // 2 icon types are added to existing list of alphabets
         return apps.size();
-    }
-
-    static class AlphabetsViewHolder extends RecyclerView.ViewHolder {
-
-        protected int viewType;
-        TextView appLabelTv;
-        ImageView appIconIv;
-
-        public AlphabetsViewHolder(View itemView, int viewType) {
-            super(itemView);
-
-            this.viewType = viewType;
-            appLabelTv = (TextView) itemView.findViewById(R.id.apps_rv_item_label);
-            appIconIv = (ImageView) itemView.findViewById(R.id.apps_rv_item_icon);
-
-            itemView.setClickable(true);
-        }
-
     }
 
 }

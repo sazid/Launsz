@@ -36,6 +36,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.HelperClass;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,7 +147,14 @@ public class AppsService extends Service {
 
                     app.label = ri.loadLabel(packageManager);
                     app.name = ri.activityInfo.packageName;
-                    app.icon = ri.activityInfo.loadIcon(packageManager);
+//                    app.icon = ri.activityInfo.loadIcon(packageManager);
+
+                    // Save the icons into disk
+                    HelperClass.saveIconToDisk(
+                            AppsService.this,
+                            app.name.toString(),
+                            ri.activityInfo.loadIcon(packageManager)
+                    );
 
                     apps.add(app);
 

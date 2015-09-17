@@ -27,9 +27,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
@@ -83,7 +80,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
 //                .into(viewHolder.appIconIv);
 
         viewHolder.imageLoaderTask = new AsyncImageLoaderTask(
-                activity, app, viewHolder.appIconIv, 40, 40
+                activity, app, viewHolder.appIconIv, 140, 140
         );
         viewHolder.imageLoaderTask.execute();
 
@@ -223,17 +220,21 @@ public class AppsAdapter extends RecyclerView.Adapter {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             if (imageView != null) {
-                // TODO: If memory usage is low, then enable animation or perhaps add a Preference
+                /*
+                TODO: If memory usage is low, then enable animation or perhaps add a Preference
+                WARNING: Causes memory leak!
+                Read the comment here: http://blog.peterkuterna.net/2011/09/simple-crossfade-on-imageview.html
+                */
                 // Since the Bitmap is going to be converted into a BitmapDrawable anyways,
                 // so we can just create a BitmapDrawable here without any issue!
-                TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{
-                        imageView.getDrawable(),
-                        new BitmapDrawable(context.getResources(), bitmap)
-                });
-                transitionDrawable.setCrossFadeEnabled(true);
-                imageView.setImageDrawable(transitionDrawable);
-                transitionDrawable.startTransition(100);
-//                imageView.setImageBitmap(bitmap);
+//                TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{
+//                        imageView.getDrawable(),
+//                        new BitmapDrawable(context.getResources(), bitmap)
+//                });
+//                transitionDrawable.setCrossFadeEnabled(true);
+//                imageView.setImageDrawable(transitionDrawable);
+//                transitionDrawable.startTransition(100);
+                imageView.setImageBitmap(bitmap);
             }
         }
 

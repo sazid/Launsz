@@ -35,7 +35,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.AppInfo;
 import com.mohammedsazid.android.launsz.HelperClass;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class AppsService extends Service {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
-    public static List<AppDetail> apps = new ArrayList<>();
+    public static List<AppInfo> apps = new ArrayList<>();
     // TODO: Set this boolean to true whenever a new package is added or removed (broadcast reciever)
     private static boolean NEEDS_REFRESH = true;
     private final IBinder appsServiceBinder = new AppsServiceBinder();
@@ -83,14 +83,14 @@ public class AppsService extends Service {
         new DownloadFilesTask().execute(callback, packageManager);
     }
 
-    public List<AppDetail> filterApps(String filter) {
+    public List<AppInfo> filterApps(String filter) {
 
         if (filter == null || filter.equals("*")) {
             return apps;
         }
 
-        List<AppDetail> filteredApps = new ArrayList<>();
-        for (AppDetail app : apps) {
+        List<AppInfo> filteredApps = new ArrayList<>();
+        for (AppInfo app : apps) {
             if (app.label.toString().trim().toUpperCase().startsWith(filter.toUpperCase())) {
                 filteredApps.add(app);
             }
@@ -143,7 +143,7 @@ public class AppsService extends Service {
                 List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
 
                 for (ResolveInfo ri : availableActivities) {
-                    AppDetail app = new AppDetail();
+                    AppInfo app = new AppInfo();
 
                     app.label = ri.loadLabel(packageManager);
                     app.name = ri.activityInfo.packageName;

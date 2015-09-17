@@ -42,7 +42,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.AppInfo;
 import com.mohammedsazid.android.launsz.R;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class AppsFragment extends Fragment {
     private static String filterStr;
     RecyclerView appsRv;
     Bundle bundle;
-    private List<AppDetail> apps;
+    private List<AppInfo> apps;
     private AppsService appsService;
     private boolean isAppsServiceBound;
     private RelativeLayout container;

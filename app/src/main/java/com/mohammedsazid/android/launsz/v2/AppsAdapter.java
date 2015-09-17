@@ -35,7 +35,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.AppInfo;
 import com.mohammedsazid.android.launsz.R;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
 import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
@@ -47,9 +47,9 @@ public class AppsAdapter extends RecyclerView.Adapter {
     FragmentActivity activity;
     boolean appDock = false;
     Uri path;
-    private List<AppDetail> apps;
+    private List<AppInfo> apps;
 
-    public AppsAdapter(FragmentActivity activity, List<AppDetail> apps, boolean appDock) {
+    public AppsAdapter(FragmentActivity activity, List<AppInfo> apps, boolean appDock) {
         this.apps = apps;
         this.activity = activity;
         this.appDock = appDock;
@@ -58,7 +58,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         AlphabetsViewHolder viewHolder = (AlphabetsViewHolder) holder;
-        final AppDetail app = apps.get(position);
+        final AppInfo app = apps.get(position);
 
         path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
 //        Log.d(AppsAdapter.class.getSimpleName(), path.toString());

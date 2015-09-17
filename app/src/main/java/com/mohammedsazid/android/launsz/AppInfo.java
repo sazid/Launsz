@@ -25,20 +25,17 @@ package com.mohammedsazid.android.launsz;
 
 import android.graphics.drawable.Drawable;
 
-/**
- * Created by sazid on 7/11/2015.
- */
-public class AppDetail implements Comparable<AppDetail> {
+public class AppInfo implements Comparable<AppInfo> {
 
     public CharSequence label;
     public CharSequence name;
     public Drawable icon;
     public int launchCount;
 
-    public AppDetail() {
+    public AppInfo() {
     }
 
-    public AppDetail(AppDetail another) {
+    public AppInfo(AppInfo another) {
         this.label = another.label;
         this.name = another.name;
         this.icon = another.icon;
@@ -46,7 +43,7 @@ public class AppDetail implements Comparable<AppDetail> {
     }
 
     @Override
-    public int compareTo(AppDetail another) {
+    public int compareTo(AppInfo another) {
         int comparison = this.label.toString().compareTo(another.label.toString());
 
         return comparison;

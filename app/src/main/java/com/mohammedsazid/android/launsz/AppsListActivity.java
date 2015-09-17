@@ -26,7 +26,7 @@ public class AppsListActivity extends Activity {
 
     private SharedPreferences sharedPrefs;
     private PackageManager packageManager;
-    private List<AppDetail> apps;
+    private List<AppInfo> apps;
     private ListView listView;
     private TextView alphabetTextView;
 //    private OnSwipeTouchListener swipeTouchListener;
@@ -63,7 +63,7 @@ public class AppsListActivity extends Activity {
 
     private void loadApps() {
         packageManager = getPackageManager();
-        apps = new ArrayList<AppDetail>();
+        apps = new ArrayList<AppInfo>();
 
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -71,7 +71,7 @@ public class AppsListActivity extends Activity {
         List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(i, 0);
 
         for (ResolveInfo ri : availableActivities) {
-            AppDetail app = new AppDetail();
+            AppInfo app = new AppInfo();
 
             app.label = ri.loadLabel(packageManager);
             app.name = ri.activityInfo.packageName;
@@ -98,7 +98,7 @@ public class AppsListActivity extends Activity {
         alphabetTextView.setText(filterAlphabet);
         alphabetTextView.setTextColor(color_enabled);
 
-        ArrayAdapter<AppDetail> adapter = new ArrayAdapter<AppDetail>(
+        ArrayAdapter<AppInfo> adapter = new ArrayAdapter<AppInfo>(
                 this,
                 R.layout.apps_list_item,
                 apps

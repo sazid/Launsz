@@ -33,7 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
-import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.AppInfo;
 
 public class AppsInfoProvider extends ContentProvider {
 
@@ -127,7 +127,7 @@ public class AppsInfoProvider extends ContentProvider {
                 }
                 break;
             case APPSINFO_INSERT_OR_UPDATE:
-                AppDetail app = new AppDetail();
+                AppInfo app = new AppInfo();
                 // Get the package name of the app
                 app.name = values.getAsString(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME);
 

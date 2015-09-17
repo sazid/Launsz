@@ -49,7 +49,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.mohammedsazid.android.launsz.AppDetail;
+import com.mohammedsazid.android.launsz.AppInfo;
 import com.mohammedsazid.android.launsz.R;
 import com.mohammedsazid.android.launsz.v2.data.AppsInfoProvider;
 import com.mohammedsazid.android.launsz.v2.data.LaunszContract;
@@ -118,8 +118,8 @@ public class MainActivity extends FragmentActivity
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final List<AppDetail> mostUsedApps = new ArrayList<>();
-                    List<AppDetail> appsFromDb = new ArrayList<>();
+                    final List<AppInfo> mostUsedApps = new ArrayList<>();
+                    List<AppInfo> appsFromDb = new ArrayList<>();
 
                     Cursor cursor = getContentResolver().query(
                             Uri.parse(AppsInfoProvider.CONTENT_URI.toString() + "/apps"),
@@ -135,7 +135,7 @@ public class MainActivity extends FragmentActivity
                     cursor.moveToFirst();
                     do {
                         if (cursor != null && cursor.getCount() != 0) {
-                            AppDetail _app = new AppDetail();
+                            AppInfo _app = new AppInfo();
 
                             _app.name = cursor.getString(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_APP_PACKAGE_NAME));
                             _app.launchCount = cursor.getInt(cursor.getColumnIndex(LaunszContract.AppsInfo.COLUMN_LAUNCH_COUNT));
@@ -171,8 +171,8 @@ public class MainActivity extends FragmentActivity
                     } else {
                         // TODO: Possible optimization point
                         // Loop through all the apps we got from db and match those with the existing ones
-                        for (AppDetail appFromDb : appsFromDb) {
-                            for (AppDetail app : appsService.apps) {
+                        for (AppInfo appFromDb : appsFromDb) {
+                            for (AppInfo app : appsService.apps) {
                                 if (appFromDb.name.equals(app.name)) {
                                     app.launchCount = appFromDb.launchCount;
                                     mostUsedApps.add(app);

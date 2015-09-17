@@ -60,7 +60,7 @@ public class HomeActivity extends Activity {
 
     private SharedPreferences sharedPrefs;
     private PackageManager packageManager;
-    private List<AppDetail> apps;
+    private List<AppInfo> apps;
     private Set<String> matchedAlphabets;
     private OnSwipeTouchListener swipeTouchListener;
     private boolean musicCtrlEnabled;
@@ -142,7 +142,7 @@ public class HomeActivity extends Activity {
 
     private void loadApps() {
         packageManager = getPackageManager();
-        apps = new ArrayList<AppDetail>();
+        apps = new ArrayList<AppInfo>();
 
         Intent i = new Intent(Intent.ACTION_MAIN, null);
         i.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -152,7 +152,7 @@ public class HomeActivity extends Activity {
         List<String> initials = new ArrayList<String>();
 
         for (ResolveInfo ri : availableActivities) {
-            AppDetail app = new AppDetail();
+            AppInfo app = new AppInfo();
 
             app.label = ri.loadLabel(packageManager);
             app.name = ri.activityInfo.packageName;

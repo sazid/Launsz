@@ -27,6 +27,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.Settings;
@@ -80,9 +83,9 @@ public class AppsAdapter extends RecyclerView.Adapter {
 //                .into(viewHolder.appIconIv);
 
         viewHolder.imageLoaderTask = new AsyncImageLoaderTask(
-                activity, viewHolder.appIconIv, 40, 40
+                activity, app, viewHolder.appIconIv, 40, 40
         );
-        viewHolder.imageLoaderTask.execute(app);
+        viewHolder.imageLoaderTask.execute();
 
 //        viewHolder.appIconIv.setImageBitmap(HelperClass.getIconFromDisk(
 //                activity,
@@ -194,7 +197,7 @@ public class AppsAdapter extends RecyclerView.Adapter {
         return apps.size();
     }
 
-    static class AsyncImageLoaderTask extends AsyncTask<Object, Void, Bitmap> {
+    static class AsyncImageLoaderTask extends AsyncTask<Void, Void, Bitmap> {
         Context context;
         ImageView imageView;
         AppInfo appInfo;
@@ -202,28 +205,40 @@ public class AppsAdapter extends RecyclerView.Adapter {
         int reqHeight;
 
         public AsyncImageLoaderTask(
-                Context context, ImageView imageView, int reqWidth, int reqHeight) {
+                Context context, AppInfo appInfo, ImageView imageView, int reqWidth, int reqHeight) {
             this.context = context;
+            this.appInfo = appInfo;
             this.imageView = imageView;
             this.reqWidth = reqWidth;
             this.reqHeight = reqHeight;
         }
 
-        @Override
-        protected void onPreExecute() {
-            // Show the placeholder icon while loading
-            if (imageView != null) imageView.setImageResource(R.mipmap.ic_default_app);
-        }
+//        @Override
+//        protected void onPreExecute() {
+//            // TODO: Perhaps make this a Preference!
+//            // Show the placeholder icon while loading
+//            if (imageView != null) imageView.setImageResource(R.mipmap.ic_default_app);
+//        }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            imageView.setImageBitmap(bitmap);
+            if (imageView != null) {
+                // TODO: If memory usage is low, then enable animation or perhaps add a Preference
+                // Since the Bitmap is going to be converted into a BitmapDrawable anyways,
+                // so we can just create a BitmapDrawable here without any issue!
+                TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{
+                        imageView.getDrawable(),
+                        new BitmapDrawable(context.getResources(), bitmap)
+                });
+                transitionDrawable.setCrossFadeEnabled(true);
+                imageView.setImageDrawable(transitionDrawable);
+                transitionDrawable.startTransition(100);
+//                imageView.setImageBitmap(bitmap);
+            }
         }
 
         @Override
-        protected Bitmap doInBackground(Object... params) {
-            appInfo = (AppInfo) params[0];
-
+        protected Bitmap doInBackground(Void... aVoid) {
             Bitmap bitmap = HelperClass.getIconFromDisk(
                     context,
                     appInfo.name.toString(),

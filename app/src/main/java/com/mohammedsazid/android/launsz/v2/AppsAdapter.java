@@ -38,6 +38,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.mohammedsazid.android.launsz.AppInfo;
 import com.mohammedsazid.android.launsz.HelperClass;
 import com.mohammedsazid.android.launsz.R;
@@ -72,25 +73,17 @@ public class AppsAdapter extends RecyclerView.Adapter {
         AppsViewHolder viewHolder = (AppsViewHolder) holder;
         final AppInfo app = apps.get(position);
 
-//        path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
+        path = Uri.withAppendedPath(Uri.parse(activity.getFilesDir().toString()), app.name.toString());
 //        Log.d(AppsAdapter.class.getSimpleName(), path.toString());
-//        Glide.with(activity)
-//                .load(path.toString())
-//                .placeholder(R.mipmap.ic_default_app)
-//                .into(viewHolder.appIconIv);
+        Glide.with(activity)
+                .load(path.toString())
+                .placeholder(R.mipmap.ic_default_app)
+                .into(viewHolder.appIconIv);
 
-        viewHolder.imageLoaderTask = new AsyncImageLoaderTask(
-                activity, app, viewHolder.appIconIv, 140, 140
-        );
-        viewHolder.imageLoaderTask.execute();
-
-//        viewHolder.appIconIv.setImageBitmap(HelperClass.getIconFromDisk(
-//                activity,
-//                app.name.toString(),
-//                true,
-//                viewHolder.appIconIv.getWidth(),
-//                viewHolder.appIconIv.getHeight()
-//        ));
+//        viewHolder.imageLoaderTask = new AsyncImageLoaderTask(
+//                activity, app, viewHolder.appIconIv, 140, 140
+//        );
+//        viewHolder.imageLoaderTask.execute();
 
         if (!appDock) {
             if (app.name.toString().equals(activity.getApplicationContext().getPackageName())) {
